@@ -21,24 +21,6 @@ class MenuSeeder extends Seeder
             'ordering' => '1',
         ]);
 
-//        $routers = Menu::create([
-//            'name' => 'Routers',
-//            'on' => 'cms',
-//            'type' => 'item',
-//            'icon' => 'fa fa-home',
-//            'route' => 'cms.network.routers',
-//            'ordering' => '1',
-//        ]);
-//
-//        $pool = Menu::create([
-//            'name' => 'IP Pool',
-//            'on' => 'cms',
-//            'type' => 'item',
-//            'icon' => 'fa fa-home',
-//            'route' => 'cms.network.ip-pool',
-//            'ordering' => '1',
-//        ]);
-
         // Website Setting
         $admin = Menu::create([
             'name' => 'Management',
@@ -99,6 +81,27 @@ class MenuSeeder extends Seeder
             'icon' => '#',
             'route' => 'cms.network.ip-pool',
             'ordering' => '2',
+        ]);
+
+        $plan = Menu::create([
+            'name' => 'Plan',
+            'on' => 'cms',
+            'type' => 'item',
+            'icon' => 'fa fa-cog',
+            'route' => '#',
+            'ordering' => '3',
+        ]);
+        $plan->menuChildren()->create([
+            'name' => 'Bandwidth',
+            'icon' => '#',
+            'route' => 'cms.plan.bandwidth',
+            'ordering' => '9',
+        ]);
+        $plan->menuChildren()->create([
+            'name' => 'PPPOE',
+            'icon' => '#',
+            'route' => 'cms.plan.pppoe',
+            'ordering' => '90',
         ]);
     }
 }
