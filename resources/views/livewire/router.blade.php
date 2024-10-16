@@ -15,13 +15,40 @@
                 <x-acc-table>
                     <thead>
                     <tr>
-                        <th>
-                            Action
-                        </th>
+                        <th>Name</th>
+                        <th>IP Address</th>
+                        <th>Username</th>
+                        <th>Password</th>
+                        <th>Description</th>
                     </tr>
                     </thead>
                     <tbody>
-
+                    @forelse($get as $d)
+                        <tr>
+                            <td>{{ $d->name }}</td>
+                            <td>{{ $d->ip_address }}</td>
+                            <td>{{ $d->username }}</td>
+                            <td>{{ $d->password ?? '' }}</td>
+                            <td>{{ $d->description }}</td>
+                            <x-acc-update-delete :id="$d->id" :$originRoute>
+                                @if($d->type != 'header')
+                                    <a
+                                        href="{{ route('cms.management.menu.child', ['menu' => $d->id]) }}"
+                                        class="dropdown-item"
+                                        wire:navigate
+                                    >
+                                        <i class="fa fa-list"></i> Child Menu
+                                    </a>
+                                @endif
+                            </x-acc-update-delete>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="100" class="text-center">
+                                No Data Found
+                            </td>
+                        </tr>
+                    @endforelse
                     </tbody>
                 </x-acc-table>
             </div>
