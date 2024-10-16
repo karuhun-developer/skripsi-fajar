@@ -10,4 +10,7 @@ return [
     'aliases' => Facade::defaultAliases()->merge([
         'BaseComponent' => App\Livewire\BaseComponent::class,
     ])->toArray(),
+//    'providers' => [
+//        RouterOS\Laravel\ServiceProvider::class,
+//    ],
 ];
