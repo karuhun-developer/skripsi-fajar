@@ -9,4 +9,11 @@ class Router extends Model
 {
     /** @use HasFactory<\Database\Factories\RouterFactory> */
     use HasFactory;
+    protected $fillable = [
+        'name',
+        'ip_address',
+        'username',
+        'password',
+        'description'
+    ];
 }
