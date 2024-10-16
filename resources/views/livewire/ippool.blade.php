@@ -27,7 +27,7 @@
                         <tr>
                             <td>{{ $d->name }}</td>
                             <td>{{ $d->local_ip }}</td>
-                            <td>{{ $d->range_id }}</td>
+                            <td>{{ $d->range_ip }}</td>
                             <td>{{ $d->star ?? '' }}</td>
                             <td>{{ $d->router->name }}</td>
                             <x-acc-update-delete :id="$d->id" :$originRoute>
