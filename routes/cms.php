@@ -33,4 +33,8 @@ Route::group([
 
     // Logs
     Route::get('logs', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'index'])->name('logs');
+
+    // Network
+    Route::get('/network/routers', \App\Livewire\Router::class)->name('network.routers');
+    Route::get('/network/ip-pool', \App\Livewire\IPPool::class)->name('network.ip-pool');
 });

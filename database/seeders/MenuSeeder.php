@@ -21,6 +21,24 @@ class MenuSeeder extends Seeder
             'ordering' => '1',
         ]);
 
+//        $routers = Menu::create([
+//            'name' => 'Routers',
+//            'on' => 'cms',
+//            'type' => 'item',
+//            'icon' => 'fa fa-home',
+//            'route' => 'cms.network.routers',
+//            'ordering' => '1',
+//        ]);
+//
+//        $pool = Menu::create([
+//            'name' => 'IP Pool',
+//            'on' => 'cms',
+//            'type' => 'item',
+//            'icon' => 'fa fa-home',
+//            'route' => 'cms.network.ip-pool',
+//            'ordering' => '1',
+//        ]);
+
         // Website Setting
         $admin = Menu::create([
             'name' => 'Management',
@@ -60,6 +78,27 @@ class MenuSeeder extends Seeder
             'icon' => '#',
             'route' => 'cms.management.access-control',
             'ordering' => '5',
+        ]);
+
+        $network = Menu::create([
+            'name' => 'Network',
+            'on' => 'cms',
+            'type' => 'item',
+            'icon' => 'fa fa-cog',
+            'route' => '#',
+            'ordering' => '2',
+        ]);
+        $network->menuChildren()->create([
+            'name' => 'Routers',
+            'icon' => '#',
+            'route' => 'cms.network.routers',
+            'ordering' => '1',
+        ]);
+        $network->menuChildren()->create([
+            'name' => 'IP Pool',
+            'icon' => '#',
+            'route' => 'cms.network.ip-pool',
+            'ordering' => '2',
         ]);
     }
 }
