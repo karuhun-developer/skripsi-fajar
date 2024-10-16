@@ -19,7 +19,8 @@ class BandwidthSeeder extends Seeder
             'rate_download_unit' => 'Mbps',
             'rate_upload' => 50,
             'rate_upload_unit' => 'Mbps',
-            'burst' => '100 100 50 1 200'
+            'burst' => '100 100 50 1 200',
+            'star' => '*14'
         ]);
 
         Bandwidth::create([
@@ -28,7 +29,8 @@ class BandwidthSeeder extends Seeder
             'rate_download_unit' => 'Mbps',
             'rate_upload' => 100,
             'rate_upload_unit' => 'Mbps',
-            'burst' => '100 100 50 1 200'
+            'burst' => '100 100 50 1 200',
+            'star' => '*14'
         ]);
     }
 }
