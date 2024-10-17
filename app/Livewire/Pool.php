@@ -8,7 +8,7 @@ use BaseComponent;
 
 class Pool extends BaseComponent
 {
-    public $title = "Management Router";
+    public $title = "Management Pool";
     public FormPool $form;
     public $searchBy = [
         [
