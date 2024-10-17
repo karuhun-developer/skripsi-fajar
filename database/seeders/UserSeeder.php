@@ -2,9 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Hotel;
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class UserSeeder extends Seeder
@@ -18,11 +16,9 @@ class UserSeeder extends Seeder
             'name' => 'Admin',
             'email' => 'admin@admin.com',
             'password' => bcrypt('password'),
-            'full_name' => 'Super Admin',
             'phone' => '+628123456789',
             'city' => 'Jakarta',
-            'subdistrict' => 'Jakarta',
-            'ward' =>'Ciperna'
+            'ward' => 'Ciperna',
         ]);
 
         $user->assignRole('admin');
