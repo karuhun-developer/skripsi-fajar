@@ -37,7 +37,6 @@ class RouterForm extends Form implements FormCrudInterface
     // Save the data
     public function save() {
         $this->validate();
-
         if ($this->id) {
             $this->update();
         } else {
