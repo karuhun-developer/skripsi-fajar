@@ -79,7 +79,7 @@ class MenuSeeder extends Seeder
         $network->menuChildren()->create([
             'name' => 'IP Pool',
             'icon' => '#',
-            'route' => 'cms.network.ip-pool',
+            'route' => 'cms.network.pool',
             'ordering' => '2',
         ]);
 

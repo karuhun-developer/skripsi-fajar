@@ -1,0 +1,65 @@
+<?php
+
+namespace App\Livewire\Forms;
+
+use App\Livewire\Contracts\FormCrudInterface;
+use App\Models\Pool;
+use Livewire\Attributes\Validate;
+use Livewire\Form;
+use RouterOS\Client;
+
+class FormPool extends Form implements FormCrudInterface
+{
+    #[Validate('nullable|numeric')]
+    public $id;
+    #[Validate('required')]
+    public $name = "Mikrotik A";
+    #[Validate('required')]
+    public $localIp = "192.168.90.1";
+    #[Validate('required')]
+    public $rangeIp = "192.168.90.2-192.168.90.80";
+    #[Validate('required')]
+    public $star = "*70";
+    #[Validate('required')]
+    public $routerId;
+
+    // Get the data
+    public function getDetail($id) {
+        $this->id = $id;
+    }
+
+    // Save the data
+    public function save() {
+        $this->validate();
+
+        if ($this->id) {
+            $this->update();
+        } else {
+            $this->store();
+        }
+
+        $this->reset();
+    }
+
+    // Store data
+    public function store() {
+
+        Pool::create([
+            'name' => $this->name,
+            'local_ip' => $this->localIp,
+            'range_ip' => $this->rangeIp,
+            'star' => "*70",
+            'router_id' => $this->routerId,
+        ]);
+    }
+
+    // Update data
+    public function update() {
+
+    }
+
+    // Delete data
+    public function delete($id) {
+
+    }
+}

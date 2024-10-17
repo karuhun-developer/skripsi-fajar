@@ -36,6 +36,7 @@ Route::group([
 
     // Network
     Route::get('/network/routers', \App\Livewire\Router::class)->name('network.routers');
+    Route::get('/network/pool', \App\Livewire\Pool::class)->name('network.pool');
 
     // Internet plan
     Route::get('/plan/bandwidth', \App\Livewire\Bandwidth::class)->name('plan.bandwidth');
