@@ -7,6 +7,7 @@ use App\Models\Pool;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
 use RouterOS\Client;
+use RouterOS\Query;
 
 class FormPool extends Form implements FormCrudInterface
 {
@@ -44,13 +45,36 @@ class FormPool extends Form implements FormCrudInterface
     // Store data
     public function store() {
 
-        Pool::create([
-            'name' => $this->name,
-            'local_ip' => $this->localIp,
-            'range_ip' => $this->rangeIp,
-            'star' => "*70",
-            'router_id' => $this->routerId,
+//        Pool::create([
+//            'name' => $this->name,
+//            'local_ip' => $this->localIp,
+//            'range_ip' => $this->rangeIp,
+//            'star' => "*70",
+//            'router_id' => $this->routerId,
+//        ]);
+        $router = \App\Models\Router::find($this->routerId);
+        $client = new Client([
+            'host' => $router->ip_address,
+            'user' => $router->username,
+            'pass' => $router->password,
+            'port' => 8728,
         ]);
+
+        $query = new Query('/ip/pool/add');
+        $query->equal('name', $this->name);
+        $query->equal('ranges', $this->rangeIp);
+
+        $response = $client->query($query)->read();
+        if ($response) {
+            Pool::create([
+                'name' => $this->name,
+                'local_ip' => $this->localIp,
+                'range_ip' => $this->rangeIp,
+                'star' => $response['after']['ret'],
+                'router_id' => $this->routerId,
+            ]);
+        }
+
     }
 
     // Update data
@@ -60,6 +84,21 @@ class FormPool extends Form implements FormCrudInterface
 
     // Delete data
     public function delete($id) {
+        $pool = Pool::find($id);
+        $router = \App\Models\Router::find($pool->router_id);
+        dd($router->ip_address);
 
+        $client = new Client([
+            'host' => $router->ip_address,
+            'user' => $router->username,
+            'pass' => $router->password,
+            'port' => 8728,
+        ]);
+        $query = new Query('/ip/pool/remove');
+        $query->equal('.id', $id);
+        $response = $client->query($query)->read();
+        if ($response) {
+            Pool::find($id)->delete();
+        }
     }
 }
