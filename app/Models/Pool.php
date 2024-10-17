@@ -13,7 +13,7 @@ class Pool extends Model
     protected $fillable = [
         'name',
         'local_ip',
-        'range_id',
+        'range_ip',
         'star',
         'router_id'
     ];
