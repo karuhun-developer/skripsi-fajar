@@ -2,12 +2,13 @@
 
 namespace App\Livewire\Forms;
 
-use App\Livewire\Contracts\FormCrudInterface;
-use App\Models\Pool;
-use Livewire\Attributes\Validate;
+use Exception;
 use Livewire\Form;
-use RouterOS\Client;
 use RouterOS\Query;
+use App\Models\Pool;
+use RouterOS\Client;
+use Livewire\Attributes\Validate;
+use App\Livewire\Contracts\FormCrudInterface;
 
 class FormPool extends Form implements FormCrudInterface
 {
@@ -44,14 +45,6 @@ class FormPool extends Form implements FormCrudInterface
 
     // Store data
     public function store() {
-
-//        Pool::create([
-//            'name' => $this->name,
-//            'local_ip' => $this->localIp,
-//            'range_ip' => $this->rangeIp,
-//            'star' => "*70",
-//            'router_id' => $this->routerId,
-//        ]);
         $router = \App\Models\Router::find($this->routerId);
         $client = new Client([
             'host' => $router->ip_address,
@@ -85,20 +78,28 @@ class FormPool extends Form implements FormCrudInterface
     // Delete data
     public function delete($id) {
         $pool = Pool::find($id);
-        $router = \App\Models\Router::find($pool->router_id);
-        dd($router->ip_address);
+        $router = $pool->router;
+        //delete from mikrotik
+        try{
+            $client = new Client([
+                'host' => $router->ip_address,
+                'user' => $router->username,
+                'pass' => $router->password,
+                'port' => 8728,
+            ]);
 
-        $client = new Client([
-            'host' => $router->ip_address,
-            'user' => $router->username,
-            'pass' => $router->password,
-            'port' => 8728,
-        ]);
-        $query = new Query('/ip/pool/remove');
-        $query->equal('.id', $id);
-        $response = $client->query($query)->read();
-        if ($response) {
-            Pool::find($id)->delete();
+            $query = new Query('/ip/pool/remove');
+            $query->equal('.id', $pool->star);
+            $response = $client->query($query)->read();
+
+            //delete from database
+            if ($response) {
+                $pool->delete();
+            }
+
+        }catch (\Exception $e) {
+            return $e->getMessage();
         }
+
     }
 }
