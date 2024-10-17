@@ -30,12 +30,14 @@ class RouterForm extends Form implements FormCrudInterface
     public $description = "asasasasas";
 
     // Get the data
-    public function getDetail($id) {
+    public function getDetail($id)
+    {
         $this->id = $id;
     }
 
     // Save the data
-    public function save() {
+    public function save()
+    {
         $this->validate();
         if ($this->id) {
             $this->update();
@@ -47,39 +49,38 @@ class RouterForm extends Form implements FormCrudInterface
     }
 
     // Store data
-    public function store() {
+    public function store()
+    {
 
-
-        try {
-            $client = new Client([
-                'host' => $this->ipaddress,
-                'user' => $this->username,
-                'pass' => $this->password,
-                'port' => 8728,
-            ]);
+        $client = new Client([
+            'host' => $this->ipaddress,
+            'user' => $this->username,
+            'pass' => $this->password,
+            'port' => 8728,
+        ]);
 //
-            $response = $client->connect();
-            if ($response) {
-                Router::create([
-                    'name' => $this->name,
-                    'ip_address' => $this->ipaddress,
-                    'username' => $this->username,
-                    'password' => $this->password,
-                    'description' => $this->description,
-                ]);
-            }
-        } catch (Exception $e) {
-            echo 'Error: ' . $e->getMessage();
+        $response = $client->connect();
+        if ($response) {
+            Router::create([
+                'name' => $this->name,
+                'ip_address' => $this->ipaddress,
+                'username' => $this->username,
+                'password' => $this->password,
+                'description' => $this->description,
+            ]);
         }
+
     }
 
     // Update data
-    public function update() {
+    public function update()
+    {
 
     }
 
     // Delete data
-    public function delete($id) {
+    public function delete($id)
+    {
 
     }
 
