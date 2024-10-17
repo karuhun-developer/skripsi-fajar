@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Livewire\Forms\FormPool;
+use App\Models\Pool as PoolModel;
 use BaseComponent;
 
 class Pool extends BaseComponent
@@ -27,10 +28,9 @@ class Pool extends BaseComponent
 
     public function render()
     {
-        $model = \App\Models\Pool::where('name', 'like', '%' . $this->search . '%');
 
         $get = $this->getDataWithFilter(
-            model: $model,
+            model: new PoolModel,
             searchBy: $this->searchBy,
             orderBy: $this->orderBy,
             order: $this->order,

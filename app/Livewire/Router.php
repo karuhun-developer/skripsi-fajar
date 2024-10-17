@@ -24,10 +24,9 @@ class Router extends BaseComponent
 
     public function render()
     {
-        $model = RouterModel::where('name', 'like', '%' . $this->search . '%');
 
         $get = $this->getDataWithFilter(
-            model: $model,
+            model: new RouterModel,
             searchBy: $this->searchBy,
             orderBy: $this->orderBy,
             order: $this->order,
