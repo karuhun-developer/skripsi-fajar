@@ -32,7 +32,13 @@ class FormPool extends Form implements FormCrudInterface
     // Get the data
     public function getDetail($id)
     {
+        $data = Pool::find($id);
         $this->id = $id;
+        $this->name = $data->name;
+        $this->localIp = $data->local_ip;
+        $this->rangeIp = $data->range_ip;
+        $this->star = $data->star;
+        $this->routerId = $data->router_id;
     }
 
     // Save the data
@@ -78,7 +84,31 @@ class FormPool extends Form implements FormCrudInterface
     }
 
     // Update data
-    public function update() {}
+    public function update()
+    {
+
+        $router = \App\Models\Router::find($this->routerId);
+        $client = new Client([
+            'host' => $router->ip_address,
+            'user' => $router->username,
+            'pass' => $router->password,
+            'port' => 8728,
+        ]);
+
+        $query = new Query('/ip/pool/set');
+        $query->equal('.id', $this->star);
+        $query->equal('name', $this->name);
+        $query->equal('ranges', $this->rangeIp);
+        $response = $client->query($query)->read();
+
+        if ($response == null) {
+            Pool::find($this->id)->update([
+                'name' => $this->name,
+                'local_ip' => $this->localIp,
+                'range_ip' => $this->rangeIp,
+            ]);
+        }
+    }
 
     // Delete data
     public function delete($id)
