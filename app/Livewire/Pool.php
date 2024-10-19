@@ -8,21 +8,31 @@ use BaseComponent;
 
 class Pool extends BaseComponent
 {
-    public $title = "Management Pool";
+    public $title = 'Management Pool';
+
     public FormPool $form;
+
     public $searchBy = [
         [
             'name' => 'Name',
             'field' => 'name',
         ],
-    ],
-        $search = '',
-        $isUpdate = false,
-        $paginate = 10,
-        $orderBy = 'name',
-        $order = 'asc';
+    ];
+
+    public $search = '';
+
+    public $isUpdate = false;
+
+    public $paginate = 10;
+
+    public $orderBy = 'name';
+
+    public $order = 'asc';
+
     public $routers = [];
-    public function mount() {
+
+    public function mount()
+    {
         $this->routers = \App\Models\Router::all();
     }
 
@@ -41,6 +51,7 @@ class Pool extends BaseComponent
         if ($this->search != null) {
             $this->resetPage();
         }
+
         return view('livewire.pool', compact('get'))->title($this->title);
     }
 }
