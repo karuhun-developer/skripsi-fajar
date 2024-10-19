@@ -4,11 +4,9 @@ namespace App\Livewire\Forms;
 
 use App\Livewire\Contracts\FormCrudInterface;
 use App\Models\Router;
-use Exception;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
 use RouterOS\Client;
-use RouterOS\Query;
 
 class RouterForm extends Form implements FormCrudInterface
 {
@@ -16,18 +14,18 @@ class RouterForm extends Form implements FormCrudInterface
     public $id;
 
     #[Validate('required')]
-    public $name = "anjay";
+    public $name = 'anjay';
 
     #[Validate('required')]
-    public $ipaddress = "192.168.10.1";
+    public $ipaddress = '192.168.10.1';
 
     #[Validate('required')]
-    public $username = "phpnuxbill";
+    public $username = 'phpnuxbill';
 
     #[Validate('required')]
-    public $password = "password";
+    public $password = 'password';
 
-    public $description = "asasasasas";
+    public $description = 'asasasasas';
 
     // Get the data
     public function getDetail($id)
@@ -58,7 +56,7 @@ class RouterForm extends Form implements FormCrudInterface
             'pass' => $this->password,
             'port' => 8728,
         ]);
-//
+        //
         $response = $client->connect();
         if ($response) {
             Router::create([
@@ -73,15 +71,11 @@ class RouterForm extends Form implements FormCrudInterface
     }
 
     // Update data
-    public function update()
-    {
-
-    }
+    public function update() {}
 
     // Delete data
     public function delete($id)
     {
-
+        Router::find($id)->delete();
     }
-
 }

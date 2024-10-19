@@ -18,8 +18,15 @@ class FormUser extends Form implements FormCrudInterface
 
     public $password;
 
+    public $pppoeUsername;
+
+    public $pppoePassword;
+
+    public $localIp;
+
     // Get the data
-    public function getDetail($id) {
+    public function getDetail($id)
+    {
         $data = User::find($id);
 
         $this->id = $id;
@@ -29,7 +36,8 @@ class FormUser extends Form implements FormCrudInterface
     }
 
     // Save the data
-    public function save() {
+    public function save()
+    {
         if ($this->id) {
             $this->update();
         } else {
@@ -40,32 +48,40 @@ class FormUser extends Form implements FormCrudInterface
     }
 
     // Store data
-    public function store() {
+    public function store()
+    {
         $this->validate([
             'id' => 'nullable',
             'role' => 'required',
             'name' => 'required',
             'email' => 'required',
             'password' => 'required|unique:users,email',
+            'pppoeUsername' => 'required',
+            'pppoePassword' => 'required',
+            'localIp' => 'required',
         ]);
 
-        $user = User::create($this->only([
-            'name',
-            'email',
-            'password',
-        ]));
+        $user = User::create([
+            'name' => $this->name,
+            'email' => $this->email,
+            'password' => $this->password,
+            'pppoe_username' => $this->pppoeUsername,
+            'pppoe_password' => $this->pppoePassword,
+            'pppoe_ip' => $this->localIp,
+        ]);
 
         // Assign new role
         $user->assignRole($this->role);
     }
 
     // Update data
-    public function update() {
+    public function update()
+    {
         $this->validate([
             'id' => 'required',
             'role' => 'required',
             'name' => 'required',
-            'email' => 'required|unique:users,email,' . $this->id,
+            'email' => 'required|unique:users,email,'.$this->id,
         ]);
 
         $user = User::find($this->id);
@@ -82,12 +98,14 @@ class FormUser extends Form implements FormCrudInterface
     }
 
     // Delete data
-    public function delete($id) {
+    public function delete($id)
+    {
         User::find($id)->delete();
     }
 
     // Change password
-    public function changePassword() {
+    public function changePassword()
+    {
         User::find($this->id)->update([
             'password' => $this->password,
         ]);

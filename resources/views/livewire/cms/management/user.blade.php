@@ -74,6 +74,33 @@
                     <x-acc-input type="email" model="form.email" placeholder="Email" />
                 </div>
             </div>
+
+            @if ($form->role == 'customer')
+
+            <div class="col-md-12">
+                <hr>
+                <div class="mb-3">
+                    <label class="form-label">PPPOE Username</label>
+                    <x-acc-input type="text" model="form.pppoeUsername" placeholder="PPPOE Username" />
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <div class="mb-3">
+                    <label class="form-label">PPPOE Username</label>
+                    <x-acc-input type="password" model="form.pppoePassword" placeholder="PPPOE Password" />
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <div class="mb-3">
+                    <label class="form-label">Local IP</label>
+                    <x-acc-input type="text" model="form.localIp" placeholder="Local IP" />
+                </div>
+            </div>
+
+            @endif
+
             @if(!$isUpdate)
                 <div class="col-md-12">
                     <div class="mb-3">

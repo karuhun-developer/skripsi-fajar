@@ -2,36 +2,42 @@
 
 namespace App\Livewire\Forms;
 
-use Exception;
-use Livewire\Form;
-use RouterOS\Query;
-use App\Models\Pool;
-use RouterOS\Client;
-use Livewire\Attributes\Validate;
 use App\Livewire\Contracts\FormCrudInterface;
+use App\Models\Pool;
+use Livewire\Attributes\Validate;
+use Livewire\Form;
+use RouterOS\Client;
+use RouterOS\Query;
 
 class FormPool extends Form implements FormCrudInterface
 {
     #[Validate('nullable|numeric')]
     public $id;
+
     #[Validate('required')]
-    public $name = "Mikrotik A";
+    public $name = 'Mikrotik A';
+
     #[Validate('required')]
-    public $localIp = "192.168.90.1";
+    public $localIp = '192.168.90.1';
+
     #[Validate('required')]
-    public $rangeIp = "192.168.90.2-192.168.90.80";
+    public $rangeIp = '192.168.90.2-192.168.90.80';
+
     #[Validate('required')]
-    public $star = "*70";
+    public $star = '*70';
+
     #[Validate('required')]
     public $routerId;
 
     // Get the data
-    public function getDetail($id) {
+    public function getDetail($id)
+    {
         $this->id = $id;
     }
 
     // Save the data
-    public function save() {
+    public function save()
+    {
         $this->validate();
 
         if ($this->id) {
@@ -44,7 +50,8 @@ class FormPool extends Form implements FormCrudInterface
     }
 
     // Store data
-    public function store() {
+    public function store()
+    {
         $router = \App\Models\Router::find($this->routerId);
         $client = new Client([
             'host' => $router->ip_address,
@@ -71,16 +78,15 @@ class FormPool extends Form implements FormCrudInterface
     }
 
     // Update data
-    public function update() {
-
-    }
+    public function update() {}
 
     // Delete data
-    public function delete($id) {
+    public function delete($id)
+    {
         $pool = Pool::find($id);
         $router = $pool->router;
         //delete from mikrotik
-        try{
+        try {
             $client = new Client([
                 'host' => $router->ip_address,
                 'user' => $router->username,
@@ -93,11 +99,11 @@ class FormPool extends Form implements FormCrudInterface
             $response = $client->query($query)->read();
 
             //delete from database
-            if ($response) {
+            if ($response == null) {
                 $pool->delete();
             }
 
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             return $e->getMessage();
         }
 
