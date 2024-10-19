@@ -99,11 +99,11 @@
             <div class="col-md-12">
                 <div class="mb-3">
                     <label class="form-label">Router</label>
-                    <select wire:model="routerId" class="form-control">
+                    <select wire:model.live="routerId" class="form-control" wire:change="getPools">
                         <option value="">Pilih Router</option>
-                        {{-- @foreach($form->routers as $router)
+                        @foreach($routers as $router)
                             <option value="{{ $router->id }}">{{ $router->name }}</option>
-                        @endforeach --}}
+                        @endforeach
                     </select>
                 </div>
             </div>
@@ -113,9 +113,9 @@
                     <label class="form-label">Pool</label>
                     <select wire:model="poolId" class="form-control">
                         <option value="">Pilih Pool</option>
-                        {{-- @foreach($form->pools as $pool)
+                        @foreach($pools as $pool)
                             <option value="{{ $pool->id }}">{{ $pool->name }}</option>
-                        @endforeach --}}
+                        @endforeach
                     </select>
                 </div>
             </div>

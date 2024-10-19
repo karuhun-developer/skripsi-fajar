@@ -3,7 +3,9 @@
 namespace App\Livewire;
 
 use App\Livewire\Forms\FormPppoe;
+use App\Models\Router;
 use App\Models\Plan;
+use App\Models\Pool;
 use BaseComponent;
 
 class Pppoe extends BaseComponent
@@ -18,22 +20,22 @@ class Pppoe extends BaseComponent
             'field' => 'name',
         ],
     ];
-
     public $search = '';
-
     public $isUpdate = false;
-
     public $paginate = 10;
-
     public $orderBy = 'name';
-
     public $order = 'asc';
-
     public $routers = [];
+    public $pools = [];
+    public $routerId;
 
     public function mount()
     {
-        $this->routers = \App\Models\Router::all();
+        $this->routers = Router::all();
+    }
+
+    public function getPools() {
+        $this->pools = Pool::where('router_id', $this->routerId)->get();
     }
 
     public function render()
