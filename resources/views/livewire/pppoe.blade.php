@@ -16,20 +16,23 @@
                     <thead>
                     <tr>
                         <th>Name</th>
-                        <th>Local IP</th>
-                        <th>Range IP</th>
+                        <th>Bandwidth</th>
+                        <th>Price</th>
+                        <th>IP Pool</th>
                         <th>Router</th>
-                        <th>Star</th>
+                        <th>Validity</th>
+                        <th>Actions</th>
                     </tr>
                     </thead>
                     <tbody>
                     @forelse($get as $d)
                         <tr>
                             <td>{{ $d->name }}</td>
-                            <td>{{ $d->local_ip }}</td>
-                            <td>{{ $d->range_ip }}</td>
-                            <td>{{ $d->router->name }}</td>
-                            <td>{{ $d->star }}</td>
+                            <td>{{ $d->bandwidth->name }}</td>
+                            <td>{{ $d->price }}</td>
+                            <td>{{ $d->pool->name }}</td>
+                            <td>{{ $d->pool->router->name }}</td>
+                            <td>{{ $d->validity . ' ' . $d->validity_unit}}</td>
                             <x-acc-update-delete :id="$d->id" :$originRoute>
                                 @if($d->type != 'header')
                                     <a
@@ -68,14 +71,14 @@
             </div>
             <div class="col-md-12">
                 <div class="mb-3">
-                    <label class="form-label">Local IP</label>
-                    <x-acc-input type="text" model="form.localIp" placeholder="192.168.10.1" />
+                    <label class="form-label">Bandwidth</label>
+                    <x-acc-input type="text" model="form.bandwidth" placeholder="Bandwidth" />
                 </div>
             </div>
             <div class="col-md-12">
                 <div class="mb-3">
-                    <label class="form-label">Range IP</label>
-                    <x-acc-input type="text" model="form.rangeIp" placeholder="192.168.10.2-192.168.10.254" />
+                    <label class="form-label">Price</label>
+                    <x-acc-input type="number" model="form.price" placeholder="Price" />
                 </div>
             </div>
 

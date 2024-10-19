@@ -3,12 +3,12 @@
 namespace App\Livewire;
 
 use App\Livewire\Forms\FormPppoe;
-use App\Models\User;
+use App\Models\Plan;
 use BaseComponent;
 
 class Pppoe extends BaseComponent
 {
-    public $title = 'Management Pool';
+    public $title = 'Management PPPoE';
 
     public FormPppoe $form;
 
@@ -39,7 +39,7 @@ class Pppoe extends BaseComponent
     public function render()
     {
         $get = $this->getDataWithFilter(
-            model: new User,
+            model: new Plan,
             searchBy: $this->searchBy,
             orderBy: $this->orderBy,
             order: $this->order,
@@ -51,6 +51,6 @@ class Pppoe extends BaseComponent
             $this->resetPage();
         }
 
-        return view('livewire.pppoe');
+        return view('livewire.pppoe', compact('get'))->title($this->title);
     }
 }
