@@ -84,15 +84,42 @@
 
             <div class="col-md-12">
                 <div class="mb-3">
+                    <label class="form-label">Validity</label>
+                    <div class="input-group">
+                        <x-acc-input type="number" model="form.validity" placeholder="Validity" min="1" />
+                        <select class="form-control" wire:model="form.validityUnit">
+                            <option value="days">Days</option>
+                            <option value="months">Months</option>
+                            <option value="years">Years</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <div class="mb-3">
                     <label class="form-label">Router</label>
-                    <select class="form-control" wire:model="form.routerId">
-                        <option value="">Select Router</option>
-                        @foreach($routers as $router)
+                    <select wire:model="routerId" class="form-control">
+                        <option value="">Pilih Router</option>
+                        {{-- @foreach($form->routers as $router)
                             <option value="{{ $router->id }}">{{ $router->name }}</option>
-                        @endforeach
+                        @endforeach --}}
                     </select>
                 </div>
             </div>
+
+            <div class="col-md-12">
+                <div class="mb-3">
+                    <label class="form-label">Pool</label>
+                    <select wire:model="poolId" class="form-control">
+                        <option value="">Pilih Pool</option>
+                        {{-- @foreach($form->pools as $pool)
+                            <option value="{{ $pool->id }}">{{ $pool->name }}</option>
+                        @endforeach --}}
+                    </select>
+                </div>
+            </div>
+
         </x-acc-form>
     </x-acc-modal>
 
