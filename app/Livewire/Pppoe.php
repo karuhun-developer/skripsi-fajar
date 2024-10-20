@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Livewire\Forms\FormPppoe;
+use App\Models\Bandwidth;
 use App\Models\Router;
 use App\Models\Plan;
 use App\Models\Pool;
@@ -27,11 +28,13 @@ class Pppoe extends BaseComponent
     public $order = 'asc';
     public $routers = [];
     public $pools = [];
+    public $bandwidths = [];
     public $routerId;
 
     public function mount()
     {
         $this->routers = Router::all();
+        $this->bandwidths = Bandwidth::all();
     }
 
     public function getPools() {

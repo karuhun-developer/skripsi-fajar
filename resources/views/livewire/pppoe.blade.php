@@ -72,7 +72,12 @@
             <div class="col-md-12">
                 <div class="mb-3">
                     <label class="form-label">Bandwidth</label>
-                    <x-acc-input type="text" model="form.bandwidth" placeholder="Bandwidth" />
+                    <select class="form-control" wire:model="form.bandwidthId">
+                        <option value="">Select Bandwidth</option>
+                        @foreach($bandwidths as $bandwidth)
+                            <option value="{{ $bandwidth->id }}">{{ $bandwidth->name }}</option>
+                        @endforeach
+                    </select>
                 </div>
             </div>
             <div class="col-md-12">
@@ -88,9 +93,9 @@
                     <div class="input-group">
                         <x-acc-input type="number" model="form.validity" placeholder="Validity" min="1" />
                         <select class="form-control" wire:model="form.validityUnit">
-                            <option value="days">Days</option>
-                            <option value="months">Months</option>
-                            <option value="years">Years</option>
+                            <option value="day">day</option>
+                            <option value="month">month</option>
+                            <option value="year">year</option>
                         </select>
                     </div>
                 </div>
@@ -111,7 +116,7 @@
             <div class="col-md-12">
                 <div class="mb-3">
                     <label class="form-label">Pool</label>
-                    <select wire:model="poolId" class="form-control">
+                    <select wire:model="form.poolId" class="form-control">
                         <option value="">Pilih Pool</option>
                         @foreach($pools as $pool)
                             <option value="{{ $pool->id }}">{{ $pool->name }}</option>

@@ -12,27 +12,27 @@ class FormPppoe extends Form implements FormCrudInterface
     #[Validate('nullable|numeric')]
     public $id;
 
-    // #[Validate('required')]
-    public $name = 'PPPoE A';
+    #[Validate('required')]
+    public $name;
 
     // #[Validate('required')]
-    public $bandwitdh = '';
+    public $bandwitdh;
+
+    #[Validate('required')]
+    public $price;
 
     // #[Validate('required')]
-    public $price = '';
+    public $poolId;
 
-    // #[Validate('required')]
-    public $pool;
-
-    // #[Validate('required')]
+    #[Validate('required')]
     public $validity;
 
     // #[Validate('required')]
     public $validityUnit;
 
-    public $pools = [];
-
-    public $routers = [];
+    // #[Validate('required')]
+    public $bandwidthId;
+    public $type = 'PPPOE';
 
     // Get the data
     public function getDetail($id)
@@ -59,12 +59,12 @@ class FormPppoe extends Form implements FormCrudInterface
     {
         PlanModel::create([
             'name' => $this->name,
-            'bandwidth_id' => 1,
-            'pool_id' => 4,
-            'price' => 80000,
-            'validity' => 5,
-            'validity_unit' => 'day',
-            'type' => 'PPPOE',
+            'bandwidth_id' => $this->bandwidthId,
+            'pool_id' => $this->poolId,
+            'price' => $this->price,
+            'validity' => $this->validity,
+            'validity_unit' => $this->validityUnit,
+            'type' => $this->type,
         ]);
     }
 
