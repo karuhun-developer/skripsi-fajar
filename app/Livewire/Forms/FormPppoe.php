@@ -42,6 +42,14 @@ class FormPppoe extends Form implements FormCrudInterface
     public function getDetail($id)
     {
         $this->id = $id;
+        $data = PlanModel::find($id);
+        $this->name = $data->name;
+        $this->bandwidthId = $data->bandwidth_id;
+        $this->poolId = $data->pool_id;
+        $this->price = $data->price;
+        $this->validity = $data->validity;
+        $this->validityUnit = $data->validity_unit;
+        $this->type = $data->type;
     }
 
     // Save the data
@@ -93,8 +101,53 @@ class FormPppoe extends Form implements FormCrudInterface
     }
 
     // Update data
-    public function update() {}
+    public function update() {
+        $dataBandwidth = Bandwidth::where('id', $this->bandwidthId)->first();
+        $dataPool = Pool::where('id', $this->poolId)->first();
+        $rateLimit = $dataBandwidth->rate_download . 'M/' . $dataBandwidth->rate_upload . 'M ' . $dataBandwidth->burst;
+
+        $client = new Client([
+            'host' => $dataPool->router->ip_address,
+            'user' => $dataPool->router->username,
+            'pass' => $dataPool->router->password,
+        ]);
+
+        $query = new Query('/ppp/profile/set');
+        $query->equal('name', $this->name);
+        $query->equal('local-address', $dataPool->local_ip);
+        $query->equal('remote-address', $dataPool->name);
+        $query->equal('rate-limit', $rateLimit);
+        $response = $client->query($query)->read();
+        dd($response);
+        if ($response == null){
+            PlanModel::find($this->id)->update([
+                'name' => $this->name,
+                'bandwidth_id' => $this->bandwidthId,
+                'pool_id' => $this->poolId,
+                'price' => $this->price,
+                'validity' => $this->validity,
+                'validity_unit' => $this->validityUnit,
+                'type' => $this->type,
+        ]);
+        }
+    }
 
     // Delete data
-    public function delete($id) {}
+    public function delete($id) {
+        $data = PlanModel::find($id);
+        $dataPool = Pool::where('id', $data->pool_id)->first();
+        $client = new Client([
+            'host' => $dataPool->router->ip_address,
+            'user' => $dataPool->router->username,
+            'pass' => $dataPool->router->password,
+        ]);
+
+        $query = new Query('/ppp/profile/remove');
+        $query->equal('.id', $data->star);
+        $response = $client->query($query)->read();
+
+        if ($response == null){
+            PlanModel::find($id)->delete();
+        }
+    }
 }
