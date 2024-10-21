@@ -2,10 +2,14 @@
 
 namespace App\Livewire\Forms;
 
-use App\Livewire\Contracts\FormCrudInterface;
+use Livewire\Form;
+use RouterOS\Query;
+use App\Models\Pool;
+use RouterOS\Client;
+use App\Models\Bandwidth;
 use App\Models\Plan as PlanModel;
 use Livewire\Attributes\Validate;
-use Livewire\Form;
+use App\Livewire\Contracts\FormCrudInterface;
 
 class FormPppoe extends Form implements FormCrudInterface
 {
@@ -57,15 +61,35 @@ class FormPppoe extends Form implements FormCrudInterface
     // Store data
     public function store()
     {
-        PlanModel::create([
-            'name' => $this->name,
-            'bandwidth_id' => $this->bandwidthId,
-            'pool_id' => $this->poolId,
-            'price' => $this->price,
-            'validity' => $this->validity,
-            'validity_unit' => $this->validityUnit,
-            'type' => $this->type,
+        $dataBandwidth = Bandwidth::where('id', $this->bandwidthId)->first();
+        $dataPool = Pool::where('id', $this->poolId)->first();
+        $rateLimit = $dataBandwidth->rate_download . 'M/' . $dataBandwidth->rate_upload . 'M ' . $dataBandwidth->burst;
+
+        $client = new Client([
+            'host' => $dataPool->router->ip_address,
+            'user' => $dataPool->router->username,
+            'pass' => $dataPool->router->password,
         ]);
+
+        $query = new Query('/ppp/profile/add');
+        $query->equal('name', $this->name);
+        $query->equal('local-address', $dataPool->local_ip);
+        $query->equal('remote-address', $dataPool->name);
+        $query->equal('rate-limit', $rateLimit);
+        $response = $client->query($query)->read();
+
+        if ($response['after']['ret'] != null){
+            PlanModel::create([
+                'name' => $this->name,
+                'bandwidth_id' => $this->bandwidthId,
+                'pool_id' => $this->poolId,
+                'price' => $this->price,
+                'validity' => $this->validity,
+                'validity_unit' => $this->validityUnit,
+                'type' => $this->type,
+                'star' => $response['after']['ret'],
+        ]);
+        }
     }
 
     // Update data
