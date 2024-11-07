@@ -118,7 +118,6 @@ class FormPppoe extends Form implements FormCrudInterface
         $query->equal('remote-address', $dataPool->name);
         $query->equal('rate-limit', $rateLimit);
         $response = $client->query($query)->read();
-        dd($response);
         if ($response == null){
             PlanModel::find($this->id)->update([
                 'name' => $this->name,
