@@ -4,6 +4,7 @@ namespace App\Livewire\Forms;
 
 use App\Livewire\Contracts\FormCrudInterface;
 use App\Models\Bandwidth;
+use App\Models\DowngradedBandwidth;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
 
@@ -53,7 +54,7 @@ class FormBandwidth extends Form implements FormCrudInterface
     // Store data
     public function store() {
         $this->validate();
-        Bandwidth::create([
+        $badnwidth = Bandwidth::create([
             'name' => $this->name,
             'rate_download' => $this->rateDownload,
             'rate_download_unit' => $this->rateDownloadUnit,
@@ -61,6 +62,15 @@ class FormBandwidth extends Form implements FormCrudInterface
             'rate_upload_unit' => $this->rateUploadUnit,
             'burst' => $this->burst,
             'star' => "*0",
+        ]);
+        DowngradedBandwidth::create([
+            "name"=> $this->name . "_DOWNGRADE_50",
+            'bandwidth_id' => $badnwidth->id,
+            'rate_download' => $this->rateDownload * 0.5,
+            'rate_download_unit' => $this->rateDownloadUnit,
+            'rate_upload' => $this->rateUpload * 0.5,
+            'rate_upload_unit' => $this->rateUploadUnit,
+            'burst' => $this->burst
         ]);
     }
 

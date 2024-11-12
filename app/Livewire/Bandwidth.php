@@ -8,7 +8,7 @@ use BaseComponent;
 
 class Bandwidth extends BaseComponent
 {
-    public $title = 'Management Pool';
+    public $title = 'Management Bandwidth';
 
     public FormBandwidth $form;
 

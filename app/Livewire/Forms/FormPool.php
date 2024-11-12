@@ -70,7 +70,7 @@ class FormPool extends Form implements FormCrudInterface
         $query->equal('name', $this->name);
         $query->equal('ranges', $this->rangeIp);
 
-        $response = $client->query($query)->read();
+        $response = $client->query(endpoint: $query)->read();
         if ($response) {
             Pool::create([
                 'name' => $this->name,
