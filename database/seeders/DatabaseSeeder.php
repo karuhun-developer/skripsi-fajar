@@ -22,7 +22,6 @@ class DatabaseSeeder extends Seeder
             MenuSeeder::class,
             SettingSeeder::class,
             RouterSeeder::class,
-            BandwidthSeeder::class,
         ]);
 
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');

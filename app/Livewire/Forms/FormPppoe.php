@@ -10,6 +10,7 @@ use App\Models\Bandwidth;
 use App\Models\Plan as PlanModel;
 use Livewire\Attributes\Validate;
 use App\Livewire\Contracts\FormCrudInterface;
+use App\Models\DowngradedBandwidth;
 
 class FormPppoe extends Form implements FormCrudInterface
 {
