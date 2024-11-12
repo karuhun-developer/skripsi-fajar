@@ -50,28 +50,43 @@ class FormUser extends Form implements FormCrudInterface
     // Store data
     public function store()
     {
-        $this->validate([
-            'id' => 'nullable',
-            'role' => 'required',
-            'name' => 'required',
-            'email' => 'required',
-            'password' => 'required|unique:users,email',
-            'pppoeUsername' => 'required',
-            'pppoePassword' => 'required',
-            'localIp' => 'required',
-        ]);
+//        $this->validate([
+//            'id' => 'nullable',
+//            'role' => 'required',
+//            'name' => 'required',
+//            'email' => 'required',
+//            'password' => 'required|unique:users,email',
+//            'pppoeUsername' => 'required',
+//            'pppoePassword' => 'required',
+//            'localIp' => 'required',
+//        ]);
+        if ($this->role != 'admin'){
 
-        $user = User::create([
-            'name' => $this->name,
-            'email' => $this->email,
-            'password' => $this->password,
-            'pppoe_username' => $this->pppoeUsername,
-            'pppoe_password' => $this->pppoePassword,
-            'pppoe_ip' => $this->localIp,
-        ]);
 
-        // Assign new role
-        $user->assignRole($this->role);
+
+            $user = User::create([
+                'name' => $this->name,
+                'email' => $this->email,
+                'password' => $this->password,
+                'pppoe_username' => $this->pppoeUsername,
+                'pppoe_password' => $this->pppoePassword,
+                'pppoe_ip' => $this->localIp,
+            ]);
+
+            // Assign new role
+            $user->assignRole($this->role);
+        }
+//        $user = User::create([
+//            'name' => $this->name,
+//            'email' => $this->email,
+//            'password' => $this->password,
+//            'pppoe_username' => $this->pppoeUsername,
+//            'pppoe_password' => $this->pppoePassword,
+//            'pppoe_ip' => $this->localIp,
+//        ]);
+//
+//        // Assign new role
+//        $user->assignRole($this->role);
     }
 
     // Update data
