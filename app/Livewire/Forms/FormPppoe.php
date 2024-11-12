@@ -73,12 +73,14 @@ class FormPppoe extends Form implements FormCrudInterface
         $dataBandwidth = Bandwidth::where('id', $this->bandwidthId)->first();
         $dataPool = Pool::where('id', $this->poolId)->first();
         $rateLimit = $dataBandwidth->rate_download . 'M/' . $dataBandwidth->rate_upload . 'M ' . $dataBandwidth->burst;
+        $rateLimitDowngrade = $dataBandwidth->downgradedBandwidth->rate_download . 'M/' . $dataBandwidth->downgradedBandwidth->rate_upload . 'M ' . $dataBandwidth->burst;
 
         $client = new Client([
             'host' => $dataPool->router->ip_address,
             'user' => $dataPool->router->username,
             'pass' => $dataPool->router->password,
         ]);
+
 
         $query = new Query('/ppp/profile/add');
         $query->equal('name', $this->name);
@@ -87,6 +89,13 @@ class FormPppoe extends Form implements FormCrudInterface
         $query->equal('rate-limit', $rateLimit);
         $response = $client->query($query)->read();
 
+        //create downgraded plan
+        $query = new Query('/ppp/profile/add');
+        $query->equal('name', $this->name . '_DOWNGRADE_50');
+        $query->equal('local-address', $dataPool->local_ip);
+        $query->equal('remote-address', $dataPool->name);
+        $query->equal('rate-limit', $rateLimitDowngrade);
+        $response = $client->query($query)->read();
         if ($response['after']['ret'] != null){
             PlanModel::create([
                 'name' => $this->name,
@@ -98,6 +107,17 @@ class FormPppoe extends Form implements FormCrudInterface
                 'type' => $this->type,
                 'star' => $response['after']['ret'],
         ]);
+
+            PlanModel::create([
+                'name' => $this->name . '_DOWNGRADE_50',
+                'bandwidth_id' => $this->bandwidthId,
+                'pool_id' => $this->poolId,
+                'price' => $this->price,
+                'validity' => $this->validity,
+                'validity_unit' => $this->validityUnit,
+                'type' => $this->type,
+                'star' => $response['after']['ret'],
+            ]);
         }
     }
 

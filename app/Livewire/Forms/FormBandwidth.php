@@ -54,8 +54,19 @@ class FormBandwidth extends Form implements FormCrudInterface
     // Store data
     public function store() {
         $this->validate();
-        $badnwidth = Bandwidth::create([
+
+        $downgrade = DowngradedBandwidth::create([
+            "name"=> $this->name . "_DOWNGRADE_50",
+            'rate_download' => $this->rateDownload * 0.5,
+            'rate_download_unit' => $this->rateDownloadUnit,
+            'rate_upload' => $this->rateUpload * 0.5,
+            'rate_upload_unit' => $this->rateUploadUnit,
+            'burst' => $this->burst
+        ]);
+
+        $bandwidth = Bandwidth::create([
             'name' => $this->name,
+            'downgraded_bandwidth_id' => $downgrade->id,
             'rate_download' => $this->rateDownload,
             'rate_download_unit' => $this->rateDownloadUnit,
             'rate_upload' => $this->rateUpload,
@@ -63,15 +74,7 @@ class FormBandwidth extends Form implements FormCrudInterface
             'burst' => $this->burst,
             'star' => "*0",
         ]);
-        DowngradedBandwidth::create([
-            "name"=> $this->name . "_DOWNGRADE_50",
-            'bandwidth_id' => $badnwidth->id,
-            'rate_download' => $this->rateDownload * 0.5,
-            'rate_download_unit' => $this->rateDownloadUnit,
-            'rate_upload' => $this->rateUpload * 0.5,
-            'rate_upload_unit' => $this->rateUploadUnit,
-            'burst' => $this->burst
-        ]);
+
     }
 
     // Update data

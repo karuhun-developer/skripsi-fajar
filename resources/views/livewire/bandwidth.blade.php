@@ -21,6 +21,7 @@
                         <th>Rate Upload</th>
                         <th>Rate Upload Unit</th>
                         <th>Burst</th>
+                        <th>Downgraded Bandwidth</th>
                         <th>Action</th>
                     </tr>
                     </thead>
@@ -32,6 +33,8 @@
                             <td>{{ $d->rate_download_unit }}</td>
                             <td>{{ $d->rate_upload }}</td>
                             <td>{{ $d->rate_upload_unit }}</td>
+                            <td>{{ $d->burst }}</td>
+                            <td>{{ $d->downgradedBandwidth->name  }}</td>
                             <td>{{ $d->burst }}</td>
 
                             <x-acc-update-delete :id="$d->id" :$originRoute>

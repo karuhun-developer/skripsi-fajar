@@ -11,6 +11,7 @@ class Bandwidth extends Model
     use HasFactory;
     protected $fillable = [
         'name',
+        'downgraded_bandwidth_id',
         'rate_download',
         'rate_download_unit',
         'rate_upload',
@@ -18,4 +19,9 @@ class Bandwidth extends Model
         'burst',
         'star',
     ];
+
+    public function downgradedBandwidth()
+    {
+        return $this->belongsTo(DowngradedBandwidth::class);
+    }
 }
