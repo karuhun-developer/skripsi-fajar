@@ -4,6 +4,7 @@ namespace App\Livewire\Forms\Cms\Management;
 
 use App\Livewire\Contracts\FormCrudInterface;
 use App\Models\Plan;
+use App\Models\Subscription;
 use App\Models\User;
 use Livewire\Form;
 use RouterOS\Client;
@@ -94,6 +95,29 @@ class FormUser extends Form implements FormCrudInterface
 
             // Assign new role
             $user->assignRole($this->role);
+
+            $startAt = now();
+            switch ($plan->validity_unit) {
+                case 'day':
+                    $expiredAt = $startAt->copy()->addDays($plan->validity);
+                    break;
+                case 'month':
+                    $expiredAt = $startAt->copy()->addMonths($plan->validity);
+                    break;
+                case 'year':
+                    $expiredAt = $startAt->copy()->addYears($plan->validity);
+                    break;
+                default:
+                    throw new \Exception('Invalid validity unit');
+            }
+
+            Subscription::create([
+                'user_id' => $user->id,
+                'plan_id' => $this->planId,
+                'start_at' => $startAt,
+                'expired_at' => $expiredAt,
+                'status' => 'active',
+            ]);
         }
     }
 
