@@ -23,6 +23,8 @@ class User extends Authenticatable
         'pppoe_username',
         'pppoe_password',
         'pppoe_ip',
+        'plan_id',
+        'star'
     ];
 
     protected $hidden = [

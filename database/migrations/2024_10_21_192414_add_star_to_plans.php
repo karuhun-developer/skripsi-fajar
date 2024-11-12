@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::table('plans', function (Blueprint $table) {
             $table->string('star');
+            $table->string('star_downgrade');
         });
     }
 

@@ -3,6 +3,7 @@
 namespace App\Livewire\Cms\Management;
 
 use App\Livewire\Forms\Cms\Management\FormUser;
+use App\Models\Plan;
 use App\Models\Role;
 use App\Models\User as UserModel;
 use BaseComponent;
@@ -34,6 +35,7 @@ class User extends BaseComponent
 
     public $isModalPasswordOpen = false;
     public $roles = [];
+    public $plans = [];
 
     public function mount() {
         // Add modal for update password
@@ -41,6 +43,7 @@ class User extends BaseComponent
 
         // Get roles
         $this->roles = Role::all();
+        $this->plans = Plan::all();
     }
 
     public function render()

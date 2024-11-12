@@ -3,8 +3,11 @@
 namespace App\Livewire\Forms\Cms\Management;
 
 use App\Livewire\Contracts\FormCrudInterface;
+use App\Models\Plan;
 use App\Models\User;
 use Livewire\Form;
+use RouterOS\Client;
+use RouterOS\Query;
 
 class FormUser extends Form implements FormCrudInterface
 {
@@ -23,6 +26,7 @@ class FormUser extends Form implements FormCrudInterface
     public $pppoePassword;
 
     public $localIp;
+    public $planId;
 
     // Get the data
     public function getDetail($id)
@@ -50,28 +54,47 @@ class FormUser extends Form implements FormCrudInterface
     // Store data
     public function store()
     {
-        $this->validate([
-            'id' => 'nullable',
-            'role' => 'required',
-            'name' => 'required',
-            'email' => 'required',
-            'password' => 'required|unique:users,email',
-            'pppoeUsername' => 'required',
-            'pppoePassword' => 'required',
-            'localIp' => 'required',
-        ]);
+//        $this->validate([
+//            'id' => 'nullable',
+//            'role' => 'required',
+//            'name' => 'required',
+//            'email' => 'required',
+//            'password' => 'required|unique:users,email',
+//            'pppoeUsername' => 'required',
+//            'pppoePassword' => 'required',
+//            'localIp' => 'required',
+//        ]);
+        if ($this->role != 'admin'){
+            $plan = Plan::find($this->planId);
+            $router = $plan->pool->router;
+            $client = new Client([
+                'host' => $router->ip_address,
+                'user' => $router->username,
+                'pass' => $router->password,
+                'port' => 8728,
+            ]);
 
-        $user = User::create([
-            'name' => $this->name,
-            'email' => $this->email,
-            'password' => $this->password,
-            'pppoe_username' => $this->pppoeUsername,
-            'pppoe_password' => $this->pppoePassword,
-            'pppoe_ip' => $this->localIp,
-        ]);
+            $query = new Query('/ppp/secret/add');
+            $query->equal('name', $this->pppoeUsername);
+            $query->equal('password', $this->pppoePassword);
+            $query->equal('service', 'pppoe');
+            $query->equal('profile', $plan->name);
+            $response = $client->query($query)->read();
 
-        // Assign new role
-        $user->assignRole($this->role);
+            $user = User::create([
+                'name' => $this->name,
+                'email' => $this->email,
+                'password' => $this->password,
+                'pppoe_username' => $this->pppoeUsername,
+                'pppoe_password' => $this->pppoePassword,
+                'pppoe_ip' => $this->localIp,
+                'plan_id' => $this->planId,
+                'star' => $response['after']['ret'],
+            ]);
+
+            // Assign new role
+            $user->assignRole($this->role);
+        }
     }
 
     // Update data

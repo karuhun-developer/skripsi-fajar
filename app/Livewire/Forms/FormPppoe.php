@@ -88,6 +88,7 @@ class FormPppoe extends Form implements FormCrudInterface
         $query->equal('remote-address', $dataPool->name);
         $query->equal('rate-limit', $rateLimit);
         $response = $client->query($query)->read();
+        $star = $response['after']['ret'];
 
         //create downgraded plan
         $query = new Query('/ppp/profile/add');
@@ -96,6 +97,8 @@ class FormPppoe extends Form implements FormCrudInterface
         $query->equal('remote-address', $dataPool->name);
         $query->equal('rate-limit', $rateLimitDowngrade);
         $response = $client->query($query)->read();
+        $starDowngrade = $response['after']['ret'];
+
         if ($response['after']['ret'] != null){
             PlanModel::create([
                 'name' => $this->name,
@@ -105,19 +108,9 @@ class FormPppoe extends Form implements FormCrudInterface
                 'validity' => $this->validity,
                 'validity_unit' => $this->validityUnit,
                 'type' => $this->type,
-                'star' => $response['after']['ret'],
+                'star' => $star,
+                'star_downgrade' => $starDowngrade,
         ]);
-
-            PlanModel::create([
-                'name' => $this->name . '_DOWNGRADE_50',
-                'bandwidth_id' => $this->bandwidthId,
-                'pool_id' => $this->poolId,
-                'price' => $this->price,
-                'validity' => $this->validity,
-                'validity_unit' => $this->validityUnit,
-                'type' => $this->type,
-                'star' => $response['after']['ret'],
-            ]);
         }
     }
 
