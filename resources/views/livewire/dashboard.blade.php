@@ -18,7 +18,7 @@
                             <i class="fa fa-check"></i>
                             Check All
                         </button>
-                        <button class="btn btn-danger" wire:click="" wire:loading.attr="disabled">
+                        <button class="btn btn-danger" wire:click="reduce()" wire:loading.attr="disabled">
                             <i class="fa fa-x"></i>
                             Uncheck All
                         </button>
