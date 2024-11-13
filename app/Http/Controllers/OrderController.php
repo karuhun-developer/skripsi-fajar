@@ -14,14 +14,15 @@ class OrderController extends Controller
 
         $serverKey = getenv('MIDTRANS_SERVER_KEY');
         $hashedKey = hash('sha512', $request->order_id . $request->status_code . $request->gross_amount . $serverKey);
-        $subscriptionPayment = SubscriptionPayment::where('snap_token', $request->order_id)->first();
+        $orderId = explode('-', $request->order_id,);
+        $subscriptionPayment = SubscriptionPayment::where('snap_token', $orderId[0])->first();
 
         if ($hashedKey !== $request->signature_key) {
             return response()->json(['message' => 'Invalid signature key'], 403);
         }
 
         $transactionStatus = $request->transaction_status;
-        $orderId = $request->order_id;
+
 
         switch ($transactionStatus){
             case 'capture':
