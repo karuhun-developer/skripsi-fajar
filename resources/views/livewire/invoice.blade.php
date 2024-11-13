@@ -15,14 +15,29 @@
                 <x-acc-table>
                     <thead>
                     <tr>
+                        <th>Order Id</th>
+                        <th>Bill Amount</th>
+                        <th>Created At</th>
+                        <th>Updated At</th>
                         <th>Status</th>
+                        <th>Action</th>
 
                     </tr>
                     </thead>
                     <tbody>
                     @forelse($get as $d)
                         <tr>
+                            <td>{{ $d->order_id }}</td>
+                            <td>{{ $d->bill_amount }}</td>
+                            <td>{{ $d->created_at }}</td>
+                            <td>{{ $d->updated_at }}</td>
                             <td>{{ $d->status }}</td>
+                            <th>
+                                <a href="{{ $d->payment_link }}" class="btn btn-primary" target="_blank" wire:loading.attr="disabled">
+                                    <i class="fa fa-check"></i>
+                                    Pay
+                                </a>
+                            </th>
 
                         </tr>
                     @empty

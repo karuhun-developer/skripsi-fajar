@@ -15,7 +15,7 @@ class OrderController extends Controller
         $serverKey = getenv('MIDTRANS_SERVER_KEY');
         $hashedKey = hash('sha512', $request->order_id . $request->status_code . $request->gross_amount . $serverKey);
         $orderId = explode('-', $request->order_id,);
-        $subscriptionPayment = SubscriptionPayment::where('snap_token', $orderId[0])->first();
+        $subscriptionPayment = SubscriptionPayment::where('order_id', $orderId[0])->first();
 
         if ($hashedKey !== $request->signature_key) {
             return response()->json(['message' => 'Invalid signature key'], 403);
