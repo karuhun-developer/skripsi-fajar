@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Subscription;
+use App\Models\SubscriptionPayment;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -32,17 +33,18 @@ class GenerateInvoices extends Command
         foreach ($subscriptions as $subscription) {
             $user = $subscription->user;
             $plan = $subscription->plan;
-            $this->generatePaymentLink($user, $plan);
+            $this->generatePaymentLink($user, $plan, $subscription);
         }
 
         $this->info('Invoices generated successfully.');
     }
 
-    public function generatePaymentLink($user, $plan)
+    public function generatePaymentLink($user, $plan, $subscription)
     {
+        $orderId = 'ORDER-' . time() . '-' . uniqid();
         $params = [
             'transaction_details' => [
-                'order_id' => uniqid(),
+                'order_id' => $orderId,
                 'gross_amount' => $plan->price,
                 'payment_link_id' => 'akses-net-' . $user->id . '-' . $plan->id . '-' . uniqid(),
             ],
@@ -71,14 +73,21 @@ class GenerateInvoices extends Command
             ],
         ];
 
-        $response = Http::withBasicAuth("SB-Mid-server-o8MFp0Ybs8U6k0BuDddYsqmb", '')->post(
-            'https://api.sandbox.midtrans.com/v1/payment-links',
+        $response = Http::withBasicAuth(getenv("MIDTRANS_SERVER_KEY"), '')->post(
+            getenv("MIDTRANS_PAYMENT_LINK"),
             $params
         );
 
         // Handle the response if needed
         if ($response->successful()) {
             // Log or perform any action if needed
+            SubscriptionPayment::create([
+                'subscription_id' => $subscription->id,
+                'bill_amount' => $plan->price,
+                'snap_token' => $orderId,
+                'status' => 'pending',
+                'created_at' => now(),
+            ]);
         } else {
             // Handle the error
             $this->error('Failed to generate payment link for user: ' . $user->email);
