@@ -11,5 +11,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::post('callback', [\App\Http\Controllers\OrderController::class, 'callback']);
 require __DIR__.'/cms.php';
 require __DIR__.'/auth.php';
