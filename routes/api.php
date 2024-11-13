@@ -20,3 +20,6 @@ Route::get('/apikey', function () {
         'GGWP',
     ]);
 })->middleware(['api', 'auth.api-key']);
+
+Route::post('/callback', [\App\Http\Controllers\OrderController::class , 'callback']);
+

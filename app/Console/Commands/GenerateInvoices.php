@@ -41,7 +41,7 @@ class GenerateInvoices extends Command
 
     public function generatePaymentLink($user, $plan, $subscription)
     {
-        $orderId = 'ORDER-' . time() . '-' . uniqid();
+        $orderId = 'INV-'.uniqid();
         $params = [
             'transaction_details' => [
                 'order_id' => $orderId,
