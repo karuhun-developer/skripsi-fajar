@@ -34,31 +34,8 @@ class Dashboard extends Component
         foreach ($subscriptions as $subscription) {
             $user = $subscription->user;
             $plan = $subscription->plan;
-            // Lakukan sesuatu dengan data user
-            // Contoh: echo $user->name;
             $this->generatePaymentLink($user, $plan);
         }
-
-
-//        $client = new Client([
-//            'host' => '192.168.10.1',
-//            'user' => 'skripsi',
-//            'pass' => 'password',
-//        ]);
-//
-//        try {
-//            foreach ($this->datas as $subscription) {
-//                $user = $subscription->user;
-//                $query = new Query('/ppp/secret/set');
-//                $query->equal('.id', $user->star);
-//                $query->equal('profile', 'pppoe-expired');
-//
-//                $response = $client->query($query)->read();
-//                // Handle the response if needed
-//            }
-//        } catch (Exception $e) {
-//            echo 'Error: ' . $e->getMessage();
-//        }
     }
 
     public function generatePaymentLink($user, $plan)
