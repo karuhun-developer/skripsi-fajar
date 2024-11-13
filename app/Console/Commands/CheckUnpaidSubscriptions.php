@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Subscription;
 use Illuminate\Console\Command;
 
 class CheckUnpaidSubscriptions extends Command
@@ -11,20 +12,24 @@ class CheckUnpaidSubscriptions extends Command
      *
      * @var string
      */
-    protected $signature = 'app:check-unpaid-subscriptions';
+    protected $signature = 'subscriptions:check-unpaid';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Check unpaid subscriptions for over a month and reduce bandwidth by 50%';
 
     /**
      * Execute the console command.
      */
     public function handle()
     {
-        //
+        $oneMonthAgo = now()->subMonth();
+
+        $subscriptions = Subscription::where('end_at', '<', $oneMonthAgo)
+            ->where('status', 'unpaid')
+            ->get();
     }
 }
