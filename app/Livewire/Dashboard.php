@@ -103,5 +103,6 @@ class Dashboard extends Component
         $query->equal('.id', $user->star);
         $query->equal('profile', $plan->name . "_DOWNGRADE_50");
         $response = $client->query($query)->read();
+        dd($response);
     }
 }
