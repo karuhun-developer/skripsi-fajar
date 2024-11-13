@@ -12,7 +12,7 @@
                 <div class="col-md-12">
                     <div class="float-start">
                         <div>
-                            {{ print_r($name) }}
+
                         </div>
                         <button class="btn btn-primary" wire:click="getPool()" wire:loading.attr="disabled">
                             <i class="fa fa-check"></i>
