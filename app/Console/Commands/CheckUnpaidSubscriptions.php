@@ -2,8 +2,11 @@
 
 namespace App\Console\Commands;
 
+use RouterOS\Query;
+use RouterOS\Client;
 use App\Models\Subscription;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 
 class CheckUnpaidSubscriptions extends Command
 {
@@ -26,10 +29,28 @@ class CheckUnpaidSubscriptions extends Command
      */
     public function handle()
     {
-        $oneMonthAgo = now()->subMonth();
+        $subscriptions = Subscription::whereDate('expired_at', DB::raw('CURDATE()'))->get();
 
-        $subscriptions = Subscription::where('end_at', '<', $oneMonthAgo)
-            ->where('status', 'unpaid')
-            ->get();
+        foreach ($subscriptions as $subscription) {
+            $user = $subscription->user;
+            $plan = $subscription->plan;
+            $this->reduceBandwidth($user, $plan);
+        }
+
+    }
+
+    private function reduceBandwidth($user, $plan)
+    {
+        $router = $user->plan->pool->router;
+        $client = new Client([
+            'host' => $router->ip_address,
+            'user' => $router->username,
+            'pass' => $router->password,
+        ]);
+
+        $query = new Query('/ppp/secret/set');
+        $query->equal('.id', $user->star);
+        $query->equal('profile', $plan->name . "_DOWNGRADE_50");
+        $response = $client->query($query)->read();
     }
 }
