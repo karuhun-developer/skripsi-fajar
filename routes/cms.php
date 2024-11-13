@@ -41,4 +41,8 @@ Route::group([
     // Internet plan
     Route::get('/plan/bandwidth', \App\Livewire\Bandwidth::class)->name('plan.bandwidth');
     Route::get('/plan/pppoe', \App\Livewire\Pppoe::class)->name('plan.pppoe');
+
+    // Invoice
+    Route::get('/invoice', \App\Livewire\Invoice::class)->name('invoice');
+
 });

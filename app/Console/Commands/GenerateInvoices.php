@@ -29,7 +29,7 @@ class GenerateInvoices extends Command
      */
     public function handle()
     {
-        $subscriptions = Subscription::whereDate('expired_at', DB::raw('CURDATE()'))->get();
+        $subscriptions = Subscription::whereDate('start_at', DB::raw('CURDATE()'))->get();
         foreach ($subscriptions as $subscription) {
             $user = $subscription->user;
             $plan = $subscription->plan;
@@ -78,13 +78,15 @@ class GenerateInvoices extends Command
             $params
         );
 
+        $paymentLink = $response->json()['payment_url'];
         // Handle the response if needed
         if ($response->successful()) {
             // Log or perform any action if needed
             SubscriptionPayment::create([
                 'subscription_id' => $subscription->id,
                 'bill_amount' => $plan->price,
-                'snap_token' => $orderId,
+                'order_id' => $orderId,
+                'payment_link' => $paymentLink,
                 'status' => 'pending',
                 'created_at' => now(),
             ]);

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SubscriptionPayment extends Model
 {
@@ -12,9 +13,15 @@ class SubscriptionPayment extends Model
     protected $fillable = [
         'subscription_id',
         'bill_amount',
-        'snap_token',
+        'payment_link',
+        'order_id',
         'status',
         'created_at',
         'updated_at',
     ];
+
+    public function subscription(): BelongsTo
+    {
+        return $this->belongsTo(Subscription::class);
+    }
 }
