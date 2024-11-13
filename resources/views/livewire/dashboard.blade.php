@@ -12,13 +12,13 @@
                 <div class="col-md-12">
                     <div class="float-start">
                         <div>
-
+            {{ $xxx }}
                         </div>
                         <button class="btn btn-primary" wire:click="getPool()" wire:loading.attr="disabled">
                             <i class="fa fa-check"></i>
                             Check All
                         </button>
-                        <button class="btn btn-danger" wire:click="reduce()" wire:loading.attr="disabled">
+                        <button class="btn btn-danger" wire:click="isolate()" wire:loading.attr="disabled">
                             <i class="fa fa-x"></i>
                             Uncheck All
                         </button>

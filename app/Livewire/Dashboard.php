@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Subscription;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
@@ -16,10 +17,16 @@ class Dashboard extends Component
 {
     public $name = "njjj";
     public $datas = [];
+    public $xxx;
 
     public function testaja()
     {
         $this->name = "wow";
+    }
+
+    public function mount()
+    {
+        $this->xxx = Carbon::now()->subDays(7)->toDateString();
     }
 
     public function render()
@@ -102,6 +109,37 @@ class Dashboard extends Component
         $query = new Query('/ppp/secret/set');
         $query->equal('.id', $user->star);
         $query->equal('profile', $plan->name . "_DOWNGRADE_50");
+        $response = $client->query($query)->read();
+        dd($response);
+    }
+
+    public function isolate()
+    {
+        $sevenDaysAgo = Carbon::now()->subDays(7)->toDateString();
+
+        $subscriptions = Subscription::whereDate('expired_at', $sevenDaysAgo)
+            ->where('status', 'throttle')
+            ->get();
+
+        foreach ($subscriptions as $subscription) {
+            $user = $subscription->user;
+            $plan = $subscription->plan;
+            $this->isolateInternet($user, $plan);
+        }
+    }
+
+    private function isolateInternet($user, $plan)
+    {
+        $router = $user->plan->pool->router;
+        $client = new Client([
+            'host' => $router->ip_address,
+            'user' => $router->username,
+            'pass' => $router->password,
+        ]);
+
+        $query = new Query('/ppp/secret/set');
+        $query->equal('.id', $user->star);
+        $query->equal('profile', "pppoe-expired");
         $response = $client->query($query)->read();
     }
 }

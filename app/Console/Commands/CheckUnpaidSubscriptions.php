@@ -29,7 +29,9 @@ class CheckUnpaidSubscriptions extends Command
      */
     public function handle()
     {
-        $subscriptions = Subscription::whereDate('expired_at', DB::raw('CURDATE()'))->get();
+        $subscriptions = Subscription::whereDate('expired_at', DB::raw('CURDATE()'))
+            ->where('status', 'active')
+            ->get();
 
         foreach ($subscriptions as $subscription) {
             $user = $subscription->user;
@@ -52,5 +54,6 @@ class CheckUnpaidSubscriptions extends Command
         $query->equal('.id', $user->star);
         $query->equal('profile', $plan->name . "_DOWNGRADE_50");
         $response = $client->query($query)->read();
+        $subscriptions = Subscription::whereDate('expired_at', DB::raw('CURDATE()'))->update(['status' => 'throttle']);
     }
 }
