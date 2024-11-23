@@ -147,7 +147,28 @@ class FormUser extends Form implements FormCrudInterface
     // Delete data
     public function delete($id)
     {
-        User::find($id)->delete();
+        $user = User::find($id);
+        $router = $user->plan->pool->router;
+        try {
+            $client = new Client([
+                'host' => $router->ip_address,
+                'user' => $router->username,
+                'pass' => $router->password,
+                'port' => 8728,
+            ]);
+
+            $query = new Query('/ppp/secret/remove');
+            $query->equal('.id', $user->star);
+            $response = $client->query($query)->read();
+
+            //delete from database
+            if ($response == null) {
+                $user->delete();
+            }
+
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
     }
 
     // Change password
