@@ -78,7 +78,6 @@ class FormUser extends Form implements FormCrudInterface
                 'password' => $this->password,
                 'pppoe_username' => $this->pppoeUsername,
                 'pppoe_password' => $this->pppoePassword,
-                'pppoe_ip' => $this->localIp,
                 'plan_id' => $this->planId,
                 'star' => $response['after']['ret'],
             ]);

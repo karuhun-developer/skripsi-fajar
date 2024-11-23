@@ -101,15 +101,8 @@
 
                 <div class="col-md-12">
                     <div class="mb-3">
-                        <label class="form-label">PPPOE Username</label>
+                        <label class="form-label">PPPOE Password</label>
                         <x-acc-input type="password" model="form.pppoePassword" placeholder="PPPOE Password"/>
-                    </div>
-                </div>
-
-                <div class="col-md-12">
-                    <div class="mb-3">
-                        <label class="form-label">Local IP</label>
-                        <x-acc-input type="text" model="form.localIp" placeholder="Local IP"/>
                     </div>
                 </div>
 
