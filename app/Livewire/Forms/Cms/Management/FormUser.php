@@ -55,16 +55,6 @@ class FormUser extends Form implements FormCrudInterface
     // Store data
     public function store()
     {
-//        $this->validate([
-//            'id' => 'nullable',
-//            'role' => 'required',
-//            'name' => 'required',
-//            'email' => 'required',
-//            'password' => 'required|unique:users,email',
-//            'pppoeUsername' => 'required',
-//            'pppoePassword' => 'required',
-//            'localIp' => 'required',
-//        ]);
         if ($this->role != 'admin'){
             $plan = Plan::find($this->planId);
             $router = $plan->pool->router;

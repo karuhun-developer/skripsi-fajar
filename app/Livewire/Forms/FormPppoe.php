@@ -47,7 +47,7 @@ class FormPppoe extends Form implements FormCrudInterface
         $this->name = $data->name;
         $this->bandwidthId = $data->bandwidth_id;
         $this->poolId = $data->pool_id;
-        $this->price = $data->price;
+        $this->price = numberToCurrency($data->price);
         $this->validity = $data->validity;
         $this->validityUnit = $data->validity_unit;
         $this->type = $data->type;
@@ -104,7 +104,7 @@ class FormPppoe extends Form implements FormCrudInterface
                 'name' => $this->name,
                 'bandwidth_id' => $this->bandwidthId,
                 'pool_id' => $this->poolId,
-                'price' => $this->price,
+                'price' => currencyToNumber($this->price),
                 'validity' => $this->validity,
                 'validity_unit' => $this->validityUnit,
                 'type' => $this->type,
@@ -157,7 +157,12 @@ class FormPppoe extends Form implements FormCrudInterface
 
         $query = new Query('/ppp/profile/remove');
         $query->equal('.id', $data->star);
-        $response = $client->query($query)->read();
+
+        //star downgrade
+        $query2 = new Query('/ppp/profile/remove');
+        $query2->equal('.id', $data->star_downgrade);
+
+        $response = $client->query($query)->query($query2)->read();
 
         if ($response == null){
             PlanModel::find($id)->delete();

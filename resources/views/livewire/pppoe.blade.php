@@ -29,7 +29,7 @@
                         <tr>
                             <td>{{ $d->name }}</td>
                             <td>{{ $d->bandwidth->name }}</td>
-                            <td>{{ $d->price }}</td>
+                            <td>Rp. {{ numberToCurrency($d->price) }}</td>
                             <td>{{ $d->pool->name }}</td>
                             <td>{{ $d->pool->router->name }}</td>
                             <td>{{ $d->validity . ' ' . $d->validity_unit}}</td>
@@ -73,7 +73,7 @@
             <div class="col-md-12">
                 <div class="mb-3">
                     <label class="form-label">Price</label>
-                    <x-acc-input type="number" model="form.price" placeholder="Price" />
+                    <x-acc-input type="text" x-mask:dynamic="$money($input, ',')" model="form.price" placeholder="Price" />
                 </div>
             </div>
 
