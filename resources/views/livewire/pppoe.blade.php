@@ -83,6 +83,7 @@
                     <div class="input-group">
                         <x-acc-input type="number" model="form.validity" placeholder="Validity" min="1" />
                         <select class="form-control" wire:model="form.validityUnit">
+                            <option value="">--Select Unit--</option>
                             <option value="day">day</option>
                             <option value="month">month</option>
                             <option value="year">year</option>

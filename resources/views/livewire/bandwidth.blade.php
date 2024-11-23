@@ -63,31 +63,38 @@
                     <x-acc-input type="text" model="form.name" placeholder="Name" />
                 </div>
             </div>
+
             <div class="col-md-12">
                 <div class="mb-3">
                     <label class="form-label">Rate Download</label>
-                    <x-acc-input type="text" model="form.rateDownload" placeholder="Rate Download" />
+                    <div class="input-group">
+                        <x-acc-input type="number" model="form.rateDownload" placeholder="Rate Download" min="1" />
+                        <select class="form-control" wire:model="form.rateDownloadUnit">
+                            <option value="">--Select Unit--</option>
+                            <option value="Kbps">Kbps</option>
+                            <option value="Mbps">Mbps</option>
+                            <option value="Gbps">Gbps</option>
+                        </select>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-12">
-                <div class="mb-3">
-                    <label class="form-label">Rate Download Unit</label>
-                    <x-acc-input type="text" model="form.rateDownloadUnit" placeholder="Rate Download Unit" />
-                </div>
-            </div>
+
 
             <div class="col-md-12">
                 <div class="mb-3">
                     <label class="form-label">Rate Upload</label>
-                    <x-acc-input type="text" model="form.rateUpload" placeholder="Rate Upload" />
+                    <div class="input-group">
+                        <x-acc-input type="number" model="form.rateUpload" placeholder="Rate Download" min="1" />
+                        <select class="form-control" wire:model="form.rateUploadUnit">
+                            <option value="">--Select Unit--</option>
+                            <option value="Kbps">Kbps</option>
+                            <option value="Mbps">Mbps</option>
+                            <option value="Gbps">Gbps</option>
+                        </select>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-12">
-                <div class="mb-3">
-                    <label class="form-label">Rate Upload Unit</label>
-                    <x-acc-input type="text" model="form.rateUploadUnit" placeholder="Rate Upload Unit" />
-                </div>
-            </div>
+
             <div class="col-md-12">
                 <div class="mb-3">
                     <label class="form-label">Burst</label>
