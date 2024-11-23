@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Subscription;
+use App\Models\User;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Config;
@@ -16,8 +17,28 @@ use RouterOS\Query;
 class Dashboard extends Component
 {
 
+    public $userCounts = [];
+
+    public function mount()
+    {
+        $this->countUsersByStatus();
+    }
+
+    public function countUsersByStatus()
+    {
+        $this->userCounts = [
+            'active' => Subscription::where('status', 'active')->count(),
+            'inactive' => Subscription::where('status', 'inactive')->count(),
+            'throttle' => Subscription::where('status', 'throttle')->count(),
+            'pending' => Subscription::where('status', 'pending')->count(),
+        ];
+    }
+
     public function render()
     {
-        return view('livewire.dashboard');
+
+        return view('livewire.dashboard', [
+            'userCounts' => $this->userCounts,
+        ]);
     }
 }

@@ -1,32 +1,82 @@
 <div>
-    <h1 class="h3 mb-3">
-        {{ $title ?? '' }}
-    </h1>
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col mt-0">
+                            <h5 class="card-title">Active Customer</h5>
+                        </div>
 
-    <div class="card">
-        <div class="card-header">
-            <h5 class="card-title">{{ $title ?? '' }} Data</h5>
-        </div>
-        <div class="card-body">
-            <div class="row mb-3">
-                <div class="col-md-12">
-                    <div class="float-start">
-
-                        <button class="btn btn-primary" wire:click="getPool()" wire:loading.attr="disabled">
-                            <i class="fa fa-check"></i>
-                            Check All
-                        </button>
-                        <button class="btn btn-danger" wire:click="isolate()" wire:loading.attr="disabled">
-                            <i class="fa fa-x"></i>
-                            Uncheck All
-                        </button>
+                        <div class="col-auto">
+                            <div class="stat text-primary">
+                                <i class="align-middle" data-feather="users"></i>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-            <div class="container">
-                <div class="row">
+                    <h1 class="mt-1 mb-3">{{ $userCounts['active'] }}</h1>
                 </div>
             </div>
         </div>
+
+        <div class="col-sm-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col mt-0">
+                            <h5 class="card-title">Unpaid Customer</h5>
+                        </div>
+
+                        <div class="col-auto">
+                            <div class="stat text-primary">
+                                <i class="align-middle" data-feather="users"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <h1 class="mt-1 mb-3">aaa</h1>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-sm-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col mt-0">
+                            <h5 class="card-title">Throttled Customer</h5>
+                        </div>
+
+                        <div class="col-auto">
+                            <div class="stat text-primary">
+                                <i class="align-middle" data-feather="users"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <h1 class="mt-1 mb-3">{{ $userCounts['throttle'] }}</h1>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col mt-0">
+                            <h5 class="card-title">Inactive Customer</h5>
+                        </div>
+
+                        <div class="col-auto">
+                            <div class="stat text-primary">
+                                <i class="align-middle" data-feather="users"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <h1 class="mt-1 mb-3">aaa</h1>
+                </div>
+            </div>
+        </div>
+
+
     </div>
 </div>
