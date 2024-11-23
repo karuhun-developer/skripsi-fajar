@@ -91,29 +91,32 @@
                 </div>
             </div>
 
-            {{-- <div class="col-md-12">
-                <div class="mb-3">
-                    <label class="form-label">Router</label>
-                    <select wire:model.live="routerId" class="form-control" wire:change="getPools">
-                        <option value="">Pilih Router</option>
-                        @foreach($routers as $router)
-                            <option value="{{ $router->id }}">{{ $router->name }}</option>
-                        @endforeach
-                    </select>
+            @if (!$isUpdate)
+                <div class="col-md-12">
+                    <div class="mb-3">
+                        <label class="form-label">Router</label>
+                        <select wire:model.live="routerId" class="form-control" wire:change="getPools">
+                            <option value="">Pilih Router</option>
+                            @foreach($routers as $router)
+                                <option value="{{ $router->id }}">{{ $router->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
-            </div>
 
-            <div class="col-md-12">
-                <div class="mb-3">
-                    <label class="form-label">Pool</label>
-                    <select wire:model="form.poolId" class="form-control">
-                        <option value="">Pilih Pool</option>
-                        @foreach($pools as $pool)
-                            <option value="{{ $pool->id }}">{{ $pool->name }}</option>
-                        @endforeach
-                    </select>
+                <div class="col-md-12">
+                    <div class="mb-3">
+                        <label class="form-label">Pool</label>
+                        <select wire:model="form.poolId" class="form-control">
+                            <option value="">Pilih Pool</option>
+                            @foreach($pools as $pool)
+                                <option value="{{ $pool->id }}">{{ $pool->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
-            </div> --}}
+
+            @endif
 
         </x-acc-form>
     </x-acc-modal>
