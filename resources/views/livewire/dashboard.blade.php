@@ -11,9 +11,7 @@
             <div class="row mb-3">
                 <div class="col-md-12">
                     <div class="float-start">
-                        <div>
-            {{ $xxx }}
-                        </div>
+
                         <button class="btn btn-primary" wire:click="getPool()" wire:loading.attr="disabled">
                             <i class="fa fa-check"></i>
                             Check All

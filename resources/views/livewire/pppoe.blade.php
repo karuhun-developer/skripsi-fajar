@@ -33,17 +33,7 @@
                             <td>{{ $d->pool->name }}</td>
                             <td>{{ $d->pool->router->name }}</td>
                             <td>{{ $d->validity . ' ' . $d->validity_unit}}</td>
-                            <x-acc-update-delete :id="$d->id" :$originRoute>
-                                @if($d->type != 'header')
-                                    <a
-                                        href="{{ route('cms.management.menu.child', ['menu' => $d->id]) }}"
-                                        class="dropdown-item"
-                                        wire:navigate
-                                    >
-                                        <i class="fa fa-list"></i> Child Menu
-                                    </a>
-                                @endif
-                            </x-acc-update-delete>
+                            <x-acc-update-delete :id="$d->id" :$originRoute/>
                         </tr>
                     @empty
                         <tr>
@@ -101,7 +91,7 @@
                 </div>
             </div>
 
-            <div class="col-md-12">
+            {{-- <div class="col-md-12">
                 <div class="mb-3">
                     <label class="form-label">Router</label>
                     <select wire:model.live="routerId" class="form-control" wire:change="getPools">
@@ -123,7 +113,7 @@
                         @endforeach
                     </select>
                 </div>
-            </div>
+            </div> --}}
 
         </x-acc-form>
     </x-acc-modal>

@@ -30,17 +30,7 @@
                             <td>{{ $d->username }}</td>
                             <td>{{ $d->password ?? '' }}</td>
                             <td>{{ $d->description }}</td>
-                            <x-acc-update-delete :id="$d->id" :$originRoute>
-                                @if($d->type != 'header')
-                                    <a
-                                        href="{{ route('cms.management.menu.child', ['menu' => $d->id]) }}"
-                                        class="dropdown-item"
-                                        wire:navigate
-                                    >
-                                        <i class="fa fa-list"></i> Child Menu
-                                    </a>
-                                @endif
-                            </x-acc-update-delete>
+                            <x-acc-update-delete :id="$d->id" :$originRoute/>
                         </tr>
                     @empty
                         <tr>

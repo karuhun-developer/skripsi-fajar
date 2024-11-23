@@ -30,17 +30,7 @@
                             <td>{{ $d->range_ip }}</td>
                             <td>{{ $d->router->name }}</td>
                             <td>{{ $d->star }}</td>
-                            <x-acc-update-delete :id="$d->id" :$originRoute>
-                                @if($d->type != 'header')
-                                    <a
-                                        href="{{ route('cms.management.menu.child', ['menu' => $d->id]) }}"
-                                        class="dropdown-item"
-                                        wire:navigate
-                                    >
-                                        <i class="fa fa-list"></i> Child Menu
-                                    </a>
-                                @endif
-                            </x-acc-update-delete>
+                            <x-acc-update-delete :id="$d->id" :$originRoute/>
                         </tr>
                     @empty
                         <tr>
@@ -78,7 +68,7 @@
                     <x-acc-input type="text" model="form.rangeIp" placeholder="192.168.10.2-192.168.10.254" />
                 </div>
             </div>
-
+{{--
             <div class="col-md-12">
                 <div class="mb-3">
                     <label class="form-label">Router</label>
@@ -89,7 +79,7 @@
                         @endforeach
                     </select>
                 </div>
-            </div>
+            </div> --}}
         </x-acc-form>
     </x-acc-modal>
 

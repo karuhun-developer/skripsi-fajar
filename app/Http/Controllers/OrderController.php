@@ -5,6 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Subscription;
 use App\Models\SubscriptionPayment;
 use Illuminate\Http\Request;
+use RouterOS\Client;
+use RouterOS\Exceptions\BadCredentialsException;
+use RouterOS\Exceptions\ClientException;
+use RouterOS\Exceptions\ConfigException;
+use RouterOS\Exceptions\ConnectException;
+use RouterOS\Exceptions\QueryException;
+use RouterOS\Query;
 
 class OrderController extends Controller
 {
@@ -36,6 +43,11 @@ class OrderController extends Controller
                 break;
             case 'settlement':
                 $subscriptionPayment->update(['status' => 'success']);
+                $user = $subscriptionPayment->subscription->user;
+                $plan = $subscriptionPayment->subscription->plan;
+
+                $this->setPppoeProfile($user, $plan);
+
                 break;
             case 'pending':
                 $subscriptionPayment->update(['status' => 'pending']);
@@ -56,5 +68,33 @@ class OrderController extends Controller
 
         return response()->json(['message' => 'Callback received successfully']);
 
+    }
+
+    private function setPppoeProfile($user, $plan)
+    {
+        try {
+            $client = new Client([
+                'host' => $user->plan->pool->router->ip_address,
+                'user' => $user->plan->pool->router->username,
+                'pass' => $user->plan->pool->router->password,
+                'port' => 8728,
+            ]);
+            $query = new Query('/ppp/secret/set');
+            $query->equal('.id', $user->star);
+            $query->equal('profile', $plan->name);
+
+            $response = $client->query(endpoint: $query)->read();
+
+        } catch (BadCredentialsException $e) {
+
+        } catch (ConnectException $e) {
+
+        } catch (ClientException $e) {
+
+        } catch (ConfigException $e) {
+
+        } catch (QueryException $e) {
+
+        }
     }
 }
