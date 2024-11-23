@@ -17,9 +17,7 @@
                     <tr>
                         <th>Name</th>
                         <th>Rate Download</th>
-                        <th>Rate Download Unit</th>
                         <th>Rate Upload</th>
-                        <th>Rate Upload Unit</th>
                         <th>Burst</th>
                         <th>Downgraded Bandwidth</th>
                         <th>Action</th>
@@ -29,13 +27,10 @@
                     @forelse($get as $d)
                         <tr>
                             <td>{{ $d->name }}</td>
-                            <td>{{ $d->rate_download }}</td>
-                            <td>{{ $d->rate_download_unit }}</td>
-                            <td>{{ $d->rate_upload }}</td>
-                            <td>{{ $d->rate_upload_unit }}</td>
+                            <td>{{ $d->rate_download . " " . $d->rate_download_unit}}</td>
+                            <td>{{ $d->rate_upload . " " . $d->rate_upload_unit }}</td>
                             <td>{{ $d->burst }}</td>
                             <td>{{ $d->downgradedBandwidth->name  }}</td>
-                            <td>{{ $d->burst }}</td>
 
                             <x-acc-update-delete :id="$d->id" :$originRoute/>
                         </tr>
