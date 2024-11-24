@@ -37,8 +37,10 @@ class Dashboard extends Component
     public function render()
     {
 
-        return view('livewire.dashboard', [
-            'userCounts' => $this->userCounts,
-        ]);
+        if(auth()->user()->hasRole(['admin'])) {
+            return view('livewire.dashboard');
+        } else {
+            return view('livewire.dashboard-user');
+        }
     }
 }
