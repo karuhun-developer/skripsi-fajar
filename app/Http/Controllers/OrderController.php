@@ -43,13 +43,17 @@ class OrderController extends Controller
                     } else {
                         $subscriptionPayment->update(['status' => 'success']);
                         $subscription->update(['status' => 'active']);
+                        $this->updateSubscriptionExpiry($subscription);
                         $this->setPppoeProfile($user, $plan);
+
                     }
                 }
                 break;
             case 'settlement':
                 $subscriptionPayment->update(['status' => 'success']);
                 $subscription->update(['status' => 'active']);
+
+                $this->updateSubscriptionExpiry($subscription);
 
                 $this->setPppoeProfile($user, $plan);
 
@@ -101,5 +105,12 @@ class OrderController extends Controller
         } catch (QueryException $e) {
 
         }
+    }
+
+    private function updateSubscriptionExpiry($subscription)
+    {
+        $subscription->update([
+            'expired_at' => now()->addDays(30),
+        ]);
     }
 }
