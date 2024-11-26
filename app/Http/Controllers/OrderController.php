@@ -42,7 +42,7 @@ class OrderController extends Controller
                         $subscriptionPayment->update(['status' => 'pending']);
                     } else {
                         $subscriptionPayment->update(['status' => 'success']);
-                        $subscription->update(['status' => 'active']);
+                        $subscription->update(['status' => 'active', 'invoice_generated_at' => null]);
                         $this->updateSubscriptionExpiry($subscription);
                         $this->setPppoeProfile($user, $plan);
 
@@ -51,7 +51,7 @@ class OrderController extends Controller
                 break;
             case 'settlement':
                 $subscriptionPayment->update(['status' => 'success']);
-                $subscription->update(['status' => 'active']);
+                $subscription->update(['status' => 'active', 'invoice_generated_at' => null]);
 
                 $this->updateSubscriptionExpiry($subscription);
 
@@ -110,7 +110,8 @@ class OrderController extends Controller
     private function updateSubscriptionExpiry($subscription)
     {
         $subscription->update([
-            'expired_at' => now()->addDays(30),
+            'start_at' => now()->addDays(30),
+            'expired_at' => now()->addDays(60),
         ]);
     }
 }
