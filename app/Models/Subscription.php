@@ -16,6 +16,7 @@ class Subscription extends Model
         'start_at',
         'expired_at',
         'status',
+        'invoice_generated_at',
     ];
 
     public function user(): BelongsTo

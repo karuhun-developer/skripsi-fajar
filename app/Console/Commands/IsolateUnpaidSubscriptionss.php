@@ -56,5 +56,7 @@ class IsolateUnpaidSubscriptionss extends Command
         $query->equal('.id', $user->star);
         $query->equal('profile', "pppoe-expired");
         $response = $client->query($query)->read();
+
+        $subscription = Subscription::where('user_id', $user->id)->where('status', 'throttle')->update(['status' => 'isolated']);
     }
 }

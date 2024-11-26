@@ -29,7 +29,9 @@ class GenerateInvoices extends Command
      */
     public function handle()
     {
-        $subscriptions = Subscription::whereDate('start_at', DB::raw('CURDATE()'))->get();
+        $subscriptions = Subscription::whereDate('start_at', DB::raw('CURDATE()'))
+            ->whereNull('invoice_generated_at')
+            ->get();
         foreach ($subscriptions as $subscription) {
             $user = $subscription->user;
             $plan = $subscription->plan;
@@ -90,6 +92,9 @@ class GenerateInvoices extends Command
                 'status' => 'pending',
                 'created_at' => now(),
             ]);
+
+            $subscription->update(['invoice_generated_at' => now()]);
+
         } else {
             // Handle the error
             $this->error('Failed to generate payment link for user: ' . $user->email);
