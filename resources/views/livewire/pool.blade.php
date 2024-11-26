@@ -20,6 +20,7 @@
                             <th>Range IP</th>
                             <th>Router</th>
                             <th>Star</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>

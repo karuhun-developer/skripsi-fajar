@@ -24,6 +24,10 @@ class OrderController extends Controller
         $orderId = explode('-', $request->order_id,);
         $subscriptionPayment = SubscriptionPayment::where('order_id', $orderId[0])->first();
 
+        $subscription = $subscriptionPayment->subscription;
+        $user = $subscriptionPayment->subscription->user;
+        $plan = $subscriptionPayment->subscription->plan;
+
         if ($hashedKey !== $request->signature_key) {
             return response()->json(['message' => 'Invalid signature key'], 403);
         }
@@ -38,13 +42,14 @@ class OrderController extends Controller
                         $subscriptionPayment->update(['status' => 'pending']);
                     } else {
                         $subscriptionPayment->update(['status' => 'success']);
+                        $subscription->update(['status' => 'active']);
+                        $this->setPppoeProfile($user, $plan);
                     }
                 }
                 break;
             case 'settlement':
                 $subscriptionPayment->update(['status' => 'success']);
-                $user = $subscriptionPayment->subscription->user;
-                $plan = $subscriptionPayment->subscription->plan;
+                $subscription->update(['status' => 'active']);
 
                 $this->setPppoeProfile($user, $plan);
 
