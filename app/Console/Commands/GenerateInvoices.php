@@ -29,7 +29,7 @@ class GenerateInvoices extends Command
      */
     public function handle()
     {
-        $subscriptions = Subscription::whereDate('start_at', DB::raw('CURDATE()'))
+        $subscriptions = Subscription::whereDate('start_at', '<=', DB::raw('CURDATE()'))
             ->whereNull('invoice_generated_at')
             ->get();
         foreach ($subscriptions as $subscription) {

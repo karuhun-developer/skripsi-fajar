@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Carbon\Carbon;
 
 class Subscription extends Model
 {
@@ -18,7 +19,11 @@ class Subscription extends Model
         'status',
         'invoice_generated_at',
     ];
-
+    protected $casts = [
+        'start_at' => 'datetime', // Konversi otomatis ke Carbon
+        'expired_at' => 'datetime', // Konversi otomatis ke Carbon
+        'invoice_generated_at' => 'datetime', // Jika perlu
+    ];
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

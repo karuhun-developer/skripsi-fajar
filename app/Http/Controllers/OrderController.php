@@ -50,8 +50,13 @@ class OrderController extends Controller
                 }
                 break;
             case 'settlement':
-                $subscriptionPayment->update(['status' => 'success']);
-                $subscription->update(['status' => 'active', 'invoice_generated_at' => null]);
+                $subscriptionPayment->update([
+                    'status' => 'success']
+                );
+                $subscription->update([
+                    'status' => 'active',
+                    'invoice_generated_at' => null
+                ]);
 
                 $this->updateSubscriptionExpiry($subscription);
 
@@ -110,8 +115,8 @@ class OrderController extends Controller
     private function updateSubscriptionExpiry($subscription)
     {
         $subscription->update([
-            'start_at' => now()->addDays(30),
-            'expired_at' => now()->addDays(60),
+            'start_at' => $subscription->start_at->addDays(30),
+            'expired_at' => $subscription->expired_at->addDays(60),
         ]);
     }
 }
