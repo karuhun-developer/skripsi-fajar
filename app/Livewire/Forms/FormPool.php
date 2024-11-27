@@ -119,7 +119,6 @@ class FormPool extends Form implements FormCrudInterface
 
             Pool::find($this->id)->update([
                 'name' => $this->name,
-                'local_ip' => $this->localIp,
                 'range_ip' => $this->rangeIp,
             ]);
 

@@ -16,7 +16,6 @@
                     <thead>
                         <tr>
                             <th>Name</th>
-                            <th>Local IP</th>
                             <th>Range IP</th>
                             <th>Router</th>
                             <th>Star</th>
@@ -27,7 +26,6 @@
                         @forelse($get as $d)
                             <tr>
                                 <td>{{ $d->name }}</td>
-                                <td>{{ $d->local_ip }}</td>
                                 <td>{{ $d->range_ip }}</td>
                                 <td>{{ $d->router->name }}</td>
                                 <td>{{ $d->star }}</td>
@@ -57,12 +55,7 @@
                     <x-acc-input type="text" model="form.name" placeholder="Name" />
                 </div>
             </div>
-            <div class="col-md-12">
-                <div class="mb-3">
-                    <label class="form-label">Local IP</label>
-                    <x-acc-input type="text" model="form.localIp" placeholder="192.168.10.1" />
-                </div>
-            </div>
+
             <div class="col-md-12">
                 <div class="mb-3">
                     <label class="form-label">Range IP</label>
