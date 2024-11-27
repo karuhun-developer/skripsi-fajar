@@ -129,29 +129,27 @@ class FormPool extends Form implements FormCrudInterface
     }
 
     // Delete data
-    // app/Livewire/Forms/FormPool.php
-
     public function delete($id)
     {
-            $pool = Pool::find($id);
-            $router = $pool->router;
+        $pool = Pool::find($id);
+        $router = $pool->router;
 
-            // Delete from Mikrotik
-            $client = new Client([
-                'host' => $router->ip_address,
-                'user' => $router->username,
-                'pass' => $router->password,
-                'port' => 8728,
-            ]);
+        // Delete from Mikrotik
+        $client = new Client([
+            'host' => $router->ip_address,
+            'user' => $router->username,
+            'pass' => $router->password,
+            'port' => 8728,
+        ]);
 
-            $query = new Query('/ip/pool/remove');
-            $query->equal('.id', $pool->star);
-            $response = $client->query($query)->read();
+        $query = new Query('/ip/pool/remove');
+        $query->equal('.id', $pool->star);
+        $response = $client->query($query)->read();
 
-            if(isset($response['after']['message'])) throw new \Exception('Pool not found');
+        if (isset($response['after']['message'])) throw new \Exception('Pool not found');
 
-            // Delete from database
-            $pool->delete();
+        // Delete from database
+        $pool->delete();
 
     }
 }

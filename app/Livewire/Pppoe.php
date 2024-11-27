@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Enums\Alert;
 use App\Livewire\Forms\FormPppoe;
 use App\Models\Bandwidth;
 use App\Models\Router;
@@ -57,5 +58,13 @@ class Pppoe extends BaseComponent
         }
 
         return view('livewire.pppoe', compact('get'))->title($this->title);
+    }
+
+    public function customSave() {
+        try {
+            $this->save();
+        } catch(\Exception $e) {
+            $this->dispatch('alert', type: Alert::error->value, message: $e->getMessage());
+        }
     }
 }

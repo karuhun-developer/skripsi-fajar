@@ -52,7 +52,7 @@
 
     {{-- Create / Update Modal --}}
     <x-acc-modal title="{{ $isUpdate ? 'Update' : 'Create' }} {{ $title }}" :isModaOpen="$modals['defaultModal']">
-        <x-acc-form submit="save">
+        <x-acc-form submit="customSave">
             <div class="col-md-12">
                 <div class="mb-3">
                     <label class="form-label">Name</label>
