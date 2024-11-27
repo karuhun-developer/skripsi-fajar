@@ -32,10 +32,10 @@ class FormPppoe extends Form implements FormCrudInterface
     #[Validate('required')]
     public $validity;
 
-    // #[Validate('required')]
+     #[Validate('required')]
     public $validityUnit;
 
-    // #[Validate('required')]
+     #[Validate('required')]
     public $bandwidthId;
     public $type = 'PPPOE';
 
