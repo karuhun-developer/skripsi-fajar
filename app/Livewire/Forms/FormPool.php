@@ -57,23 +57,28 @@ class FormPool extends Form implements FormCrudInterface
     }
 
     // Store data
+    // app/Livewire/Forms/FormPool.php
+
     public function store()
     {
-        $router = \App\Models\Router::find($this->routerId);
-        $client = new Client([
-            'host' => $router->ip_address,
-            'user' => $router->username,
-            'pass' => $router->password,
-            'port' => 8728,
-        ]);
+        try {
+            $router = \App\Models\Router::find($this->routerId);
+            $client = new Client([
+                'host' => $router->ip_address,
+                'user' => $router->username,
+                'pass' => $router->password,
+                'port' => 8728,
+            ]);
 
-        $query = new Query('/ip/pool/add');
-        $query->equal('name', $this->name);
-        $query->equal('ranges', $this->rangeIp);
+            $query = new Query('/ip/pool/add');
+            $query->equal('name', $this->name);
+            $query->equal('ranges', $this->rangeIp);
 
-        $response = $client->query(endpoint: $query)->read();
-        // dd($response);
-        if ($response) {
+            $response = $client->query($query)->read();
+            if (isset($response['after']['message'])) {
+                throw new \Exception($response['after']['message']);
+            }
+
             Pool::create([
                 'name' => $this->name,
                 'local_ip' => $this->localIp,
@@ -81,45 +86,57 @@ class FormPool extends Form implements FormCrudInterface
                 'star' => $response['after']['ret'],
                 'router_id' => $this->routerId,
             ]);
-        }
 
+
+        } catch (\Exception $e) {
+            throw new \Exception($e->getMessage());
+        }
     }
 
     // Update data
+    // app/Livewire/Forms/FormPool.php
+
     public function update()
     {
-        $router = \App\Models\Router::find($this->routerId);
-        $client = new Client([
-            'host' => $router->ip_address,
-            'user' => $router->username,
-            'pass' => $router->password,
-            'port' => 8728,
-        ]);
+        try {
+            $router = \App\Models\Router::find($this->routerId);
+            $client = new Client([
+                'host' => $router->ip_address,
+                'user' => $router->username,
+                'pass' => "asas",
+                'port' => 8728,
+            ]);
 
-        $query = new Query('/ip/pool/set');
-        $query->equal('.id', $this->star);
-        $query->equal('name', $this->name);
-        $query->equal('ranges', $this->rangeIp);
-        $response = $client->query($query)->read();
+            $query = new Query('/ip/pool/set');
+            $query->equal('.id', $this->star);
+            $query->equal('name', $this->name);
+            $query->equal('ranges', $this->rangeIp);
+            $response = $client->query($query)->read();
 
-        if(count($response) == 0) throw new \Exception('Failed to update pool');
+            if (isset($response['after']['message'])) {
+                throw new \Exception($response['after']['message']);
+            }
 
-        if ($response == null) {
             Pool::find($this->id)->update([
                 'name' => $this->name,
                 'local_ip' => $this->localIp,
                 'range_ip' => $this->rangeIp,
             ]);
+
+        } catch (\Exception $e) {
+            throw new \Exception($e->getMessage());
         }
     }
 
     // Delete data
+    // app/Livewire/Forms/FormPool.php
+
     public function delete($id)
     {
-        $pool = Pool::find($id);
-        $router = $pool->router;
-        //delete from mikrotik
-        try {
+            $pool = Pool::find($id);
+            $router = $pool->router;
+
+            // Delete from Mikrotik
             $client = new Client([
                 'host' => $router->ip_address,
                 'user' => $router->username,
@@ -131,14 +148,10 @@ class FormPool extends Form implements FormCrudInterface
             $query->equal('.id', $pool->star);
             $response = $client->query($query)->read();
 
-            //delete from database
-            if ($response == null) {
-                $pool->delete();
-            }
+            if(isset($response['after']['message'])) throw new \Exception('Pool not found');
 
-        } catch (\Exception $e) {
-            return $e->getMessage();
-        }
+            // Delete from database
+            $pool->delete();
 
     }
 }

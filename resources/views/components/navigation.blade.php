@@ -9,11 +9,14 @@
                 @php
                     $isActive = false;
 
+
                     // Check if menu is active
                     $isActive = request()->routeIs($menu->route) || str_contains(request()->path(), strtolower($menu->name));
                 @endphp
                 @if($menu->type != 'header')
                     @if(auth()->user()->can('view.'.$menu->route) || $menu->route == '#')
+                        @if(!auth()->user()->hasRole('admin') && $menu->route == '#')
+                            @else
                         <li class="sidebar-{{ $menu->type }} {{ $isActive ? 'active' : '' }}">
                             <a class="sidebar-link @if(count($menu->menuChildren) > 0) {{ $isActive ? '' : 'collapsed' }} @endif"
                                 @if(count($menu->menuChildren) > 0)
@@ -62,6 +65,7 @@
                                 </ul>
                             @endif
                         </li>
+                            @endif
                     @endif
                 @else
                     <li class="sidebar-header">{{ $menu->name }}</li>
