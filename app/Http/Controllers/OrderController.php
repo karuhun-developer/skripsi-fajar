@@ -71,6 +71,7 @@ class OrderController extends Controller
                 break;
             case 'expire':
                 $subscriptionPayment->update(['status' => 'expired']);
+                $subscription->update(['invoice_generated_at' => null]);
                 break;
             case 'cancel':
                 $subscriptionPayment->update(['status' => 'cancelled']);

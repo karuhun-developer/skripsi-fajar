@@ -2,12 +2,13 @@
 
 namespace App\Livewire\Forms;
 
-use App\Livewire\Contracts\FormCrudInterface;
-use App\Models\Pool;
-use Livewire\Attributes\Validate;
 use Livewire\Form;
-use RouterOS\Client;
 use RouterOS\Query;
+use App\Enums\Alert;
+use App\Models\Pool;
+use RouterOS\Client;
+use Livewire\Attributes\Validate;
+use App\Livewire\Contracts\FormCrudInterface;
 
 class FormPool extends Form implements FormCrudInterface
 {
@@ -71,6 +72,7 @@ class FormPool extends Form implements FormCrudInterface
         $query->equal('ranges', $this->rangeIp);
 
         $response = $client->query(endpoint: $query)->read();
+        // dd($response);
         if ($response) {
             Pool::create([
                 'name' => $this->name,
@@ -86,7 +88,6 @@ class FormPool extends Form implements FormCrudInterface
     // Update data
     public function update()
     {
-
         $router = \App\Models\Router::find($this->routerId);
         $client = new Client([
             'host' => $router->ip_address,
@@ -100,6 +101,8 @@ class FormPool extends Form implements FormCrudInterface
         $query->equal('name', $this->name);
         $query->equal('ranges', $this->rangeIp);
         $response = $client->query($query)->read();
+
+        if(count($response) == 0) throw new \Exception('Failed to update pool');
 
         if ($response == null) {
             Pool::find($this->id)->update([
