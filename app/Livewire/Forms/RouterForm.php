@@ -14,18 +14,18 @@ class RouterForm extends Form implements FormCrudInterface
     public $id;
 
     #[Validate('required')]
-    public $name = 'anjay';
+    public $name = 'Mikrotik';
 
     #[Validate('required')]
     public $ipaddress = '192.168.10.1';
 
     #[Validate('required')]
-    public $username = 'phpnuxbill';
+    public $username = 'skripsi';
 
     #[Validate('required')]
     public $password = 'password';
 
-    public $description = 'asasasasas';
+    public $description = 'test';
 
     // Get the data
     public function getDetail($id)
@@ -49,29 +49,62 @@ class RouterForm extends Form implements FormCrudInterface
     // Store data
     public function store()
     {
+        try {
 
-        $client = new Client([
-            'host' => $this->ipaddress,
-            'user' => $this->username,
-            'pass' => $this->password,
-            'port' => 8728,
-        ]);
-        //
-        $response = $client->connect();
-        if ($response) {
-            Router::create([
-                'name' => $this->name,
-                'ip_address' => $this->ipaddress,
-                'username' => $this->username,
-                'password' => $this->password,
-                'description' => $this->description,
+            $client = new Client([
+                'host' => $this->ipaddress,
+                'user' => $this->username,
+                'pass' => $this->password,
+                'port' => 8728,
             ]);
+            //
+            $response = $client->connect();
+
+            if ($response) {
+                Router::create([
+                    'name' => $this->name,
+                    'ip_address' => $this->ipaddress,
+                    'username' => $this->username,
+                    'password' => $this->password,
+                    'description' => $this->description,
+                ]);
+            }
+
+        } catch (\Exception $e) {
+            throw new \Exception($e->getMessage());
         }
 
     }
 
     // Update data
-    public function update() {}
+    public function update()
+    {
+        try {
+            $router = Router::find($this->id);
+
+            $client = new Client([
+                'host' => $this->ipaddress,
+                'user' => $this->username,
+                'pass' => $this->password,
+                'port' => 8728,
+            ]);
+
+            $response = $client->connect();
+
+            if ($response) {
+                $router->update([
+                    'name' => $this->name,
+                    'ip_address' => $this->ipaddress,
+                    'username' => $this->username,
+                    'password' => $this->password,
+                    'description' => $this->description,
+                ]);
+            }
+
+        } catch (\Exception $e) {
+            throw new \Exception($e->getMessage());
+        }
+    }
 
     // Delete data
     public function delete($id)

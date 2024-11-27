@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Enums\Alert;
 use App\Livewire\Forms\RouterForm;
 use BaseComponent;
 use App\Models\Router as RouterModel;
@@ -38,5 +39,13 @@ class Router extends BaseComponent
             $this->resetPage();
         }
         return view('livewire.router', compact('get'))->title($this->title);
+    }
+
+    public function customSave() {
+        try {
+            $this->save();
+        } catch(\Exception $e) {
+            $this->dispatch('alert', type: Alert::error->value, message: $e->getMessage());
+        }
     }
 }
