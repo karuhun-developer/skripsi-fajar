@@ -100,6 +100,10 @@ class FormPool extends Form implements FormCrudInterface
     {
         try {
             $router = \App\Models\Router::find($this->routerId);
+            Pool::find($this->id)->update([
+                'name' => $this->name,
+                'range_ip' => $this->rangeIp,
+            ]);
             $client = new Client([
                 'host' => $router->ip_address,
                 'user' => $router->username,
@@ -117,10 +121,7 @@ class FormPool extends Form implements FormCrudInterface
                 throw new \Exception($response['after']['message']);
             }
 
-            Pool::find($this->id)->update([
-                'name' => $this->name,
-                'range_ip' => $this->rangeIp,
-            ]);
+
 
         } catch (\Exception $e) {
             throw new \Exception($e->getMessage());
@@ -130,7 +131,7 @@ class FormPool extends Form implements FormCrudInterface
     // Delete data
     public function delete($id)
     {
-        $pool = Pool::find($id);
+        $pool = Pool::find($id)->delete();
         $router = $pool->router;
 
         // Delete from Mikrotik
@@ -146,9 +147,6 @@ class FormPool extends Form implements FormCrudInterface
         $response = $client->query($query)->read();
 
         if (isset($response['after']['message'])) throw new \Exception('Pool not found');
-
-        // Delete from database
-        $pool->delete();
 
     }
 }

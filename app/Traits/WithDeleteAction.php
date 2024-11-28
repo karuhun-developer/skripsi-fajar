@@ -20,7 +20,11 @@ trait WithDeleteAction {
             $this->form->delete($id);
 
             $this->dispatch('alert', type: Alert::success->value, message: 'Data deleted successfully');
-        } catch (UnauthorizedException|\Exception $exception) {
+        } catch (UnauthorizedException $exception) {
+            $this->dispatch('alert', type: Alert::error->value, message: $exception->getMessage());
+        } catch (\Illuminate\Database\QueryException $exception) {
+            $this->dispatch('alert', type: Alert::error->value, message: 'Data cannot be deleted because it is related to other data');
+        } catch (\Exception $exception) {
             $this->dispatch('alert', type: Alert::error->value, message: $exception->getMessage());
         }
     }
