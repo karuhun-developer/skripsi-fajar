@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Cms\Management;
 
+use App\Enums\Alert;
 use App\Livewire\Forms\Cms\Management\FormUser;
 use App\Models\Plan;
 use App\Models\Role;
@@ -78,5 +79,13 @@ class User extends BaseComponent
         $this->closeModalUpdatePassword();
 
         session()->flash('success', 'Password has been changed');
+    }
+
+    public function customSave() {
+        try {
+            $this->save();
+        } catch(\Exception $e) {
+            $this->dispatch('alert', type: Alert::error->value, message: $e->getMessage());
+        }
     }
 }

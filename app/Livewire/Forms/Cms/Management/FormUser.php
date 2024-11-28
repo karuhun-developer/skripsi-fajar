@@ -55,59 +55,68 @@ class FormUser extends Form implements FormCrudInterface
     // Store data
     public function store()
     {
-        if ($this->role != 'admin'){
-            $plan = Plan::find($this->planId);
-            $router = $plan->pool->router;
-            $client = new Client([
-                'host' => $router->ip_address,
-                'user' => $router->username,
-                'pass' => $router->password,
-                'port' => 8728,
-            ]);
+        try {
+            if ($this->role != 'admin'){
+                $plan = Plan::find($this->planId);
+                $router = $plan->pool->router;
+                $client = new Client([
+                    'host' => $router->ip_address,
+                    'user' => $router->username,
+                    'pass' => $router->password,
+                    'port' => 8728,
+                ]);
 
-            $query = new Query('/ppp/secret/add');
-            $query->equal('name', $this->pppoeUsername);
-            $query->equal('password', $this->pppoePassword);
-            $query->equal('service', 'pppoe');
-            $query->equal('profile', $plan->name);
-            $response = $client->query($query)->read();
+                $query = new Query('/ppp/secret/add');
+                $query->equal('name', $this->pppoeUsername);
+                $query->equal('password', $this->pppoePassword);
+                $query->equal('service', 'pppoe');
+                $query->equal('profile', $plan->name);
+                $response = $client->query($query)->read();
+//                dd(isset($response['after']['message']));
+                if (isset($response['after']['message'])) {
+                    throw new \Exception($response['after']['message']);
+                }
 
-            $user = User::create([
-                'name' => $this->name,
-                'email' => $this->email,
-                'password' => $this->password,
-                'pppoe_username' => $this->pppoeUsername,
-                'pppoe_password' => $this->pppoePassword,
-                'plan_id' => $this->planId,
-                'star' => $response['after']['ret'],
-            ]);
+                $user = User::create([
+                    'name' => $this->name,
+                    'email' => $this->email,
+                    'password' => $this->password,
+                    'pppoe_username' => $this->pppoeUsername,
+                    'pppoe_password' => $this->pppoePassword,
+                    'plan_id' => $this->planId,
+                    'star' => $response['after']['ret'],
+                ]);
 
-            // Assign new role
-            $user->assignRole($this->role);
+                // Assign new role
+                $user->assignRole($this->role);
 
-            $startAt = now();
-            switch ($plan->validity_unit) {
-                case 'day':
-                    $expiredAt = $startAt->copy()->addDays($plan->validity);
-                    break;
-                case 'month':
-                    $expiredAt = $startAt->copy()->addMonths($plan->validity);
-                    break;
-                case 'year':
-                    $expiredAt = $startAt->copy()->addYears($plan->validity);
-                    break;
-                default:
-                    throw new \Exception('Invalid validity unit');
+                $startAt = now();
+                switch ($plan->validity_unit) {
+                    case 'day':
+                        $expiredAt = $startAt->copy()->addDays($plan->validity);
+                        break;
+                    case 'month':
+                        $expiredAt = $startAt->copy()->addMonths($plan->validity);
+                        break;
+                    case 'year':
+                        $expiredAt = $startAt->copy()->addYears($plan->validity);
+                        break;
+                    default:
+                        throw new \Exception('Invalid validity unit');
+                }
+
+                Subscription::create([
+                    'user_id' => $user->id,
+                    'plan_id' => $this->planId,
+                    'start_at' => $startAt,
+                    'expired_at' => $expiredAt,
+                    'status' => 'active',
+                ]);
             }
-
-            Subscription::create([
-                'user_id' => $user->id,
-                'plan_id' => $this->planId,
-                'start_at' => $startAt,
-                'expired_at' => $expiredAt,
-                'status' => 'active',
-            ]);
+        } catch (\Exception $e) {
+            throw new \Exception($e->getMessage());
         }
+
     }
 
     // Update data
