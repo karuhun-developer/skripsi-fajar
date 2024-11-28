@@ -17,6 +17,9 @@
                         <th>Plan</th>
                         <th>Start At</th>
                         <th>Expired At</th>
+                        <th>Status</th>
+                        <th>Validity</th>
+                        <th>Type</th>
                         <th>Action</th>
 
                     </tr>
@@ -30,6 +33,10 @@
                             <td>{{ $d->plan->name ?? 'N/A' }}</td>
                             <td>{{ $d->plan->subscriptions[0]->start_at ?? 'N/A' }}</td>
                             <td>{{ $d->plan->subscriptions[0]->expired_at ?? 'N/A' }}</td>
+                            <td>{{ $d->plan->subscriptions[0]->status ?? 'N/A' }}</td>
+                            <td>{{ $d->plan->validity ?? 'N/A'}} {{ $d->plan->validity_unit ?? '' }}</td>
+                            <td>{{ $d->plan->type ?? 'N/A'}}</td>
+
 
                             <x-acc-update-delete :id="$d->id" :$originRoute>
                                 <button class="dropdown-item"
