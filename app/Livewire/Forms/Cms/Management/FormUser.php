@@ -130,20 +130,80 @@ class FormUser extends Form implements FormCrudInterface
             'id' => 'required',
             'role' => 'required',
             'name' => 'required',
-            'email' => 'required|unique:users,email,'.$this->id,
+            'email' => 'required|unique:users,email,' . $this->id,
         ]);
 
         $user = User::find($this->id);
 
-        // Remove all role
+        // Remove all roles
         $user->syncRoles([]);
 
         // Assign new role
         $user->assignRole($this->role);
+
+        // Update user details
         $user->update($this->only([
             'name',
             'email',
         ]));
+
+        // Additional logic for customer type
+        if ($this->role == 'customer') {
+            $this->validate([
+                'planId' => 'required',
+                'pppoeUsername' => 'required',
+                'pppoePassword' => 'required',
+            ]);
+
+            $plan = Plan::find($this->planId);
+            $router = $plan->pool->router;
+            $client = new Client([
+                'host' => $router->ip_address,
+                'user' => $router->username,
+                'pass' => $router->password,
+                'port' => 8728,
+            ]);
+
+            $query = new Query('/ppp/secret/set');
+            $query->equal('.id', $user->star);
+            $query->equal('name', $this->pppoeUsername);
+            $query->equal('password', $this->pppoePassword);
+            $query->equal('profile', $plan->name);
+            $response = $client->query($query)->read();
+
+            if (isset($response['after']['message'])) {
+                throw new \Exception($response['after']['message']);
+            }
+
+            $user->update([
+                'pppoe_username' => $this->pppoeUsername,
+                'pppoe_password' => $this->pppoePassword,
+                'plan_id' => $this->planId,
+            ]);
+
+            $subscription = Subscription::where('user_id', $user->id)->first();
+            $startAt = now();
+            switch ($plan->validity_unit) {
+                case 'day':
+                    $expiredAt = $startAt->copy()->addDays($plan->validity);
+                    break;
+                case 'month':
+                    $expiredAt = $startAt->copy()->addMonths($plan->validity);
+                    break;
+                case 'year':
+                    $expiredAt = $startAt->copy()->addYears($plan->validity);
+                    break;
+                default:
+                    throw new \Exception('Invalid validity unit');
+            }
+
+            $subscription->update([
+                'plan_id' => $this->planId,
+                'start_at' => $startAt,
+                'expired_at' => $expiredAt,
+                'status' => 'active',
+            ]);
+        }
     }
 
     // Delete data

@@ -99,9 +99,9 @@
 {{--                                <option value="{{ $plan->id }}">{{ $plan->name }}</option>--}}
 {{--                            @endforeach--}}
 {{--                        </x-acc-input>--}}
-                        <label class="form-label">Bandwidth</label>
+                        <label class="form-label">Plan</label>
                         <select class="form-control" wire:model="form.planId">
-                            <option value="">Select Bandwidth</option>
+                            <option value="">Select Plan</option>
                             @foreach($plans as $plan)
                                 <option value="{{ $plan->id }}">{{ $plan->name }}</option>
                             @endforeach
