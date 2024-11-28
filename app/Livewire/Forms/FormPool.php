@@ -107,7 +107,7 @@ class FormPool extends Form implements FormCrudInterface
             $client = new Client([
                 'host' => $router->ip_address,
                 'user' => $router->username,
-                'pass' => "asas",
+                'pass' => $router->password,
                 'port' => 8728,
             ]);
 
