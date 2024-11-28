@@ -38,6 +38,10 @@ class FormUser extends Form implements FormCrudInterface
         $this->name = $data->name;
         $this->email = $data->email;
         $this->role = $data->getRoleNames()[0];
+        $this->planId = $data->plan_id;
+        $this->pppoeUsername = $data->pppoe_username;
+        $this->pppoePassword = $data->pppoe_password;
+
     }
 
     // Save the data

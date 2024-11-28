@@ -80,13 +80,20 @@
                 <div class="col-md-12">
                     <hr>
                     <div class="mb-3">
-                        <label class="form-label">Plan</label>
-                        <x-acc-input type="select" :live="true" model="form.planId">
-                            <option value="">--Select Plan--</option>
+{{--                        <label class="form-label">Plan</label>--}}
+{{--                        <x-acc-input type="select" :live="true" model="form.planId">--}}
+{{--                            <option value="">--Select Plan--</option>--}}
+{{--                            @foreach($plans as $plan)--}}
+{{--                                <option value="{{ $plan->id }}">{{ $plan->name }}</option>--}}
+{{--                            @endforeach--}}
+{{--                        </x-acc-input>--}}
+                        <label class="form-label">Bandwidth</label>
+                        <select class="form-control" wire:model="form.planId">
+                            <option value="">Select Bandwidth</option>
                             @foreach($plans as $plan)
                                 <option value="{{ $plan->id }}">{{ $plan->name }}</option>
                             @endforeach
-                        </x-acc-input>
+                        </select>
                     </div>
                 </div>
 
