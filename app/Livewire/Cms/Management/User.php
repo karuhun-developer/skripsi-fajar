@@ -15,19 +15,19 @@ class User extends BaseComponent
     public $title = 'Management User';
 
     public $searchBy = [
-            [
-                'name' => 'Name',
-                'field' => 'name',
-            ],
-            [
-                'name' => 'Email',
-                'field' => 'email',
-            ],
-            [
-                'name' => 'Role',
-                'field' => 'roles.name',
-            ],
+        [
+            'name' => 'Name',
+            'field' => "name",
         ],
+        [
+            'name' => 'Email',
+            'field' => 'email',
+        ],
+        [
+            'name' => 'Role',
+            'field' => 'roles.name',
+        ],
+    ],
         $search = '',
         $isUpdate = false,
         $paginate = 10,
@@ -38,7 +38,8 @@ class User extends BaseComponent
     public $roles = [];
     public $plans = [];
 
-    public function mount() {
+    public function mount()
+    {
         // Add modal for update password
         $this->addModal('updatePasswordModal');
 
@@ -49,8 +50,11 @@ class User extends BaseComponent
 
     public function render()
     {
+        $model = UserModel::with(['roles', 'plan.subscriptions',]);
+
+
         $get = $this->getDataWithFilter(
-            model: UserModel::with('roles'),
+            model: $model,
             searchBy: $this->searchBy,
             orderBy: $this->orderBy,
             order: $this->order,
@@ -65,26 +69,30 @@ class User extends BaseComponent
         return view('livewire.cms.management.user', compact('get'))->title($this->title);
     }
 
-    public function editPassword($id) {
+    public function editPassword($id)
+    {
         $this->form->getDetail($id);
         $this->openModal('updatePasswordModal');
     }
 
-    public function closeModalUpdatePassword() {
+    public function closeModalUpdatePassword()
+    {
         $this->closeModal('updatePasswordModal');
     }
 
-    public function changePassword() {
+    public function changePassword()
+    {
         $this->form->changePassword();
         $this->closeModalUpdatePassword();
 
         session()->flash('success', 'Password has been changed');
     }
 
-    public function customSave() {
+    public function customSave()
+    {
         try {
             $this->save();
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->dispatch('alert', type: Alert::error->value, message: $e->getMessage());
         }
     }

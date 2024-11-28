@@ -15,6 +15,8 @@
                     <tr>
                         <x-acc-loop-th :$searchBy :$orderBy :$order/>
                         <th>Plan</th>
+                        <th>Start At</th>
+                        <th>Expired At</th>
                         <th>Action</th>
 
                     </tr>
@@ -25,7 +27,10 @@
                             <td>{{ $d->name }}</td>
                             <td>{{ $d->email }}</td>
                             <td>{{ $d->roles[0]?->name }}</td>
-                            <td>{{ $d->plan->bandwidth->name ?? 'No Plan' }}</td>
+                            <td>{{ $d->plan->name ?? 'N/A' }}</td>
+                            <td>{{ $d->plan->subscriptions[0]->start_at ?? 'N/A' }}</td>
+                            <td>{{ $d->plan->subscriptions[0]->expired_at ?? 'N/A' }}</td>
+
                             <x-acc-update-delete :id="$d->id" :$originRoute>
                                 <button class="dropdown-item"
                                         wire:click="editPassword('{{ $d->id }}')">
