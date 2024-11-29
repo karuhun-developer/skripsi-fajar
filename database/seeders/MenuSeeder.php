@@ -66,7 +66,7 @@ class MenuSeeder extends Seeder
             'name' => 'Network',
             'on' => 'cms',
             'type' => 'item',
-            'icon' => 'fa fa-cog',
+            'icon' => 'fa fa-network-wired',
             'route' => '#',
             'ordering' => '2',
         ]);
@@ -102,6 +102,15 @@ class MenuSeeder extends Seeder
             'icon' => '#',
             'route' => 'cms.plan.pppoe',
             'ordering' => '90',
+        ]);
+
+        $invoice = Menu::create([
+            'name' => 'Invoice',
+            'on' => 'cms',
+            'type' => 'item',
+            'icon' => 'fa fa-cog',
+            'route' => '#',
+            'ordering' => '4',
         ]);
     }
 }
