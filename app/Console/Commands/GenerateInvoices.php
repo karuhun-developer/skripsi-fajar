@@ -75,8 +75,11 @@ class GenerateInvoices extends Command
             ],
         ];
 
-        $response = Http::withBasicAuth(getenv("MIDTRANS_SERVER_KEY"), '')->post(
-            getenv("MIDTRANS_PAYMENT_LINK"),
+        $midtransServerKey = env('MIDTRANS_SERVER_KEY');
+        $midtransPaymentLink = env('MIDTRANS_PAYMENT_LINK');
+
+        $response = Http::withBasicAuth($midtransServerKey, '')->post(
+            $midtransPaymentLink,
             $params
         );
 
