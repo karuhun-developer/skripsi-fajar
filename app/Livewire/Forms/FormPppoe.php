@@ -141,7 +141,7 @@ class FormPppoe extends Form implements FormCrudInterface
             $query = new Query('/ppp/profile/set');
             $query->equal('name', $this->name);
             $query->equal('local-address', $dataPool->local_ip);
-            $query->equal('remote-address', $dataPool->name);
+//            $query->equal('remote-address', $dataPool->name);
             $query->equal('rate-limit', $rateLimit);
             $response = $client->query($query)->read();
 
