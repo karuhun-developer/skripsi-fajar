@@ -67,7 +67,7 @@ class FormUser extends Form implements FormCrudInterface
                     'host' => $router->ip_address,
                     'user' => $router->username,
                     'pass' => $router->password,
-                    'port' => 8728,
+                    'port' => $router->port,
                 ]);
 
                 $query = new Query('/ppp/secret/add');
@@ -161,7 +161,7 @@ class FormUser extends Form implements FormCrudInterface
                 'host' => $router->ip_address,
                 'user' => $router->username,
                 'pass' => $router->password,
-                'port' => 8728,
+                'port' => $router->port,
             ]);
 
             $query = new Query('/ppp/secret/set');
@@ -216,7 +216,7 @@ class FormUser extends Form implements FormCrudInterface
                 'host' => $router->ip_address,
                 'user' => $router->username,
                 'pass' => $router->password,
-                'port' => 8728,
+                'port' => $router->port,
             ]);
 
             $query = new Query('/ppp/secret/remove');
