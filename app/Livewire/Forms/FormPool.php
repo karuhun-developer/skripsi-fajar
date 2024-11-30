@@ -72,6 +72,7 @@ class FormPool extends Form implements FormCrudInterface
 
             $query = new Query('/ip/pool/add');
             $query->equal('name', $this->name);
+            $query->equal('local-address', $this->localIp);
             $query->equal('ranges', $this->rangeIp);
 
             $response = $client->query($query)->read();
@@ -102,6 +103,7 @@ class FormPool extends Form implements FormCrudInterface
             $router = \App\Models\Router::find($this->routerId);
             Pool::find($this->id)->update([
                 'name' => $this->name,
+                'local_ip' => $this->localIp,
                 'range_ip' => $this->rangeIp,
             ]);
             $client = new Client([
