@@ -16,13 +16,13 @@ class FormPool extends Form implements FormCrudInterface
     public $id;
 
     #[Validate('required')]
-    public $name = 'Mikrotik A';
+    public $name;
 
     #[Validate('required')]
-    public $localIp = '192.168.90.1';
+    public $localIp;
 
     #[Validate('required')]
-    public $rangeIp = '192.168.90.2-192.168.90.80';
+    public $rangeIp;
 
     #[Validate('required')]
     public $star = '*70';
@@ -67,7 +67,7 @@ class FormPool extends Form implements FormCrudInterface
                 'host' => $router->ip_address,
                 'user' => $router->username,
                 'pass' => $router->password,
-                'port' => 8728,
+                'port' => $router->port,
             ]);
 
             $query = new Query('/ip/pool/add');
@@ -108,7 +108,7 @@ class FormPool extends Form implements FormCrudInterface
                 'host' => $router->ip_address,
                 'user' => $router->username,
                 'pass' => $router->password,
-                'port' => 8728,
+                'port' => $router->port,
             ]);
 
             $query = new Query('/ip/pool/set');
@@ -139,7 +139,7 @@ class FormPool extends Form implements FormCrudInterface
             'host' => $router->ip_address,
             'user' => $router->username,
             'pass' => $router->password,
-            'port' => 8728,
+            'port' => $router->port,
         ]);
 
         $query = new Query('/ip/pool/remove');

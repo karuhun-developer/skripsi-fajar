@@ -80,6 +80,7 @@ class FormPppoe extends Form implements FormCrudInterface
                 'host' => $dataPool->router->ip_address,
                 'user' => $dataPool->router->username,
                 'pass' => $dataPool->router->password,
+                'port' => $dataPool->router->port,
             ]);
 
 
@@ -136,6 +137,7 @@ class FormPppoe extends Form implements FormCrudInterface
                 'host' => $dataPool->router->ip_address,
                 'user' => $dataPool->router->username,
                 'pass' => $dataPool->router->password,
+                'port' => $dataPool->router->port,
             ]);
 
             $query = new Query('/ppp/profile/set');
@@ -177,6 +179,7 @@ class FormPppoe extends Form implements FormCrudInterface
                 'host' => $dataPool->router->ip_address,
                 'user' => $dataPool->router->username,
                 'pass' => $dataPool->router->password,
+                'port' => $dataPool->router->port,
             ]);
 
             $query = new Query('/ppp/profile/remove');
