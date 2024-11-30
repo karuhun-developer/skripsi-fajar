@@ -51,6 +51,7 @@ class GenerateInvoices extends Command
                 'payment_link_id' => 'akses-net-' . $user->id . '-' . $plan->id . '-' . uniqid(),
             ],
             'customer_required' => true,
+            'usage_limit' => 1,
             'expiry' => [
                 'start_time' => now()->format('Y-m-d H:i:s') . ' +0700',
                 'duration' => 20,
