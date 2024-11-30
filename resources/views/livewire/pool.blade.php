@@ -58,6 +58,13 @@
 
             <div class="col-md-12">
                 <div class="mb-3">
+                    <label class="form-label">Local IP</label>
+                    <x-acc-input type="text" model="form.localIp" placeholder="192.168.10.1" />
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <div class="mb-3">
                     <label class="form-label">Range IP</label>
                     <x-acc-input type="text" model="form.rangeIp" placeholder="192.168.10.2-192.168.10.254" />
                 </div>
