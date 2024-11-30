@@ -72,7 +72,6 @@ class FormPool extends Form implements FormCrudInterface
 
             $query = new Query('/ip/pool/add');
             $query->equal('name', $this->name);
-            $query->equal('local-address', $this->localIp);
             $query->equal('ranges', $this->rangeIp);
 
             $response = $client->query($query)->read();
