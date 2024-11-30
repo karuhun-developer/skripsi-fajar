@@ -14,23 +14,33 @@ class RouterForm extends Form implements FormCrudInterface
     public $id;
 
     #[Validate('required')]
-    public $name = 'Mikrotik';
+    public $name;
 
     #[Validate('required')]
-    public $ipaddress = '192.168.10.1';
+    public $ipaddress;
+
+    #[Validate('required|integer')]
+    public $port = 8728;
 
     #[Validate('required')]
-    public $username = 'skripsi';
+    public $username;
 
     #[Validate('required')]
-    public $password = 'password';
+    public $password;
 
-    public $description = 'test';
+    public $description;
 
     // Get the data
     public function getDetail($id)
     {
+        $router = Router::find($id);
         $this->id = $id;
+        $this->name = $router->name;
+        $this->ipaddress = $router->ip_address;
+        $this->port = $router->port;
+        $this->username = $router->username;
+        $this->password = $router->password;
+        $this->description = $router->description;
     }
 
     // Save the data
@@ -55,7 +65,7 @@ class RouterForm extends Form implements FormCrudInterface
                 'host' => $this->ipaddress,
                 'user' => $this->username,
                 'pass' => $this->password,
-                'port' => 8728,
+                'port' => (int) $this->port,
             ]);
             //
             $response = $client->connect();
@@ -64,6 +74,7 @@ class RouterForm extends Form implements FormCrudInterface
                 Router::create([
                     'name' => $this->name,
                     'ip_address' => $this->ipaddress,
+                    'port' => $this->port,
                     'username' => $this->username,
                     'password' => $this->password,
                     'description' => $this->description,
@@ -86,7 +97,7 @@ class RouterForm extends Form implements FormCrudInterface
                 'host' => $this->ipaddress,
                 'user' => $this->username,
                 'pass' => $this->password,
-                'port' => 8728,
+                'port' => (int) $this->port,
             ]);
 
             $response = $client->connect();
@@ -95,6 +106,7 @@ class RouterForm extends Form implements FormCrudInterface
                 $router->update([
                     'name' => $this->name,
                     'ip_address' => $this->ipaddress,
+                    'port' => $this->port,
                     'username' => $this->username,
                     'password' => $this->password,
                     'description' => $this->description,

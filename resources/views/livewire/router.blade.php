@@ -56,10 +56,16 @@
                     <x-acc-input type="text" model="form.name" placeholder="Name" />
                 </div>
             </div>
-            <div class="col-md-12">
+            <div class="col-md-6">
                 <div class="mb-3">
                     <label class="form-label">Ip Address</label>
                     <x-acc-input type="text" model="form.ipaddress" placeholder="Ip Address" />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label class="form-label">Port</label>
+                    <x-acc-input type="number" model="form.port" placeholder="Port" />
                 </div>
             </div>
             <div class="col-md-12">

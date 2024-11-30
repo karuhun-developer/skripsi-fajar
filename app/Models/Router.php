@@ -12,6 +12,7 @@ class Router extends Model
     protected $fillable = [
         'name',
         'ip_address',
+        'port',
         'username',
         'password',
         'description'
