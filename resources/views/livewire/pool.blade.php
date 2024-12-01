@@ -16,6 +16,7 @@
                     <thead>
                         <tr>
                             <th>Name</th>
+                            <th>Local Address</th>
                             <th>Range IP</th>
                             <th>Router</th>
                             <th>Star</th>
@@ -26,6 +27,7 @@
                         @forelse($get as $d)
                             <tr>
                                 <td>{{ $d->name }}</td>
+                                <td>{{ $d->local_ip }}</td>
                                 <td>{{ $d->range_ip }}</td>
                                 <td>{{ $d->router->name }}</td>
                                 <td>{{ $d->star }}</td>

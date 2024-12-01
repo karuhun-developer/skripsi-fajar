@@ -17,8 +17,9 @@
                     <tr>
                         <th>Name</th>
                         <th>IP Address</th>
+                        <th>Port</th>
                         <th>Username</th>
-                        <th>Password</th>
+{{--                        <th>Password</th>--}}
                         <th>Description</th>
                     </tr>
                     </thead>
@@ -27,8 +28,9 @@
                         <tr>
                             <td>{{ $d->name }}</td>
                             <td>{{ $d->ip_address }}</td>
+                            <td>{{ $d->port }}</td>
                             <td>{{ $d->username }}</td>
-                            <td>{{ $d->password ?? '' }}</td>
+{{--                            <td>{{ $d->password ?? '' }}</td>--}}
                             <td>{{ $d->description }}</td>
                             <x-acc-update-delete :id="$d->id" :$originRoute/>
                         </tr>
