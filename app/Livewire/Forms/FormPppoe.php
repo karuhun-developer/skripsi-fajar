@@ -39,6 +39,7 @@ class FormPppoe extends Form implements FormCrudInterface
     public $bandwidthId;
     public $type = 'PPPOE';
 
+    public $description;
     // Get the data
     public function getDetail($id)
     {
@@ -51,6 +52,8 @@ class FormPppoe extends Form implements FormCrudInterface
         $this->validity = $data->validity;
         $this->validityUnit = $data->validity_unit;
         $this->type = $data->type;
+        $this->description = $data->description;
+
     }
 
     // Save the data
@@ -89,6 +92,8 @@ class FormPppoe extends Form implements FormCrudInterface
             $query->equal('local-address', $dataPool->local_ip);
             $query->equal('remote-address', $dataPool->name);
             $query->equal('rate-limit', $rateLimit);
+            $query->equal('comment', $this->description);
+
             $response = $client->query($query)->read();
 
             if (isset($response['after']['message'])) {
@@ -117,6 +122,7 @@ class FormPppoe extends Form implements FormCrudInterface
                     'type' => $this->type,
                     'star' => $star,
                     'star_downgrade' => $starDowngrade,
+                    'description' => $this->description,
                 ]);
             }
 
@@ -144,6 +150,7 @@ class FormPppoe extends Form implements FormCrudInterface
             $query->equal('name', $this->name);
             $query->equal('local-address', $dataPool->local_ip);
             $query->equal('remote-address', $dataPool->name);
+            $query->equal('comment', $this->description);
             $query->equal('rate-limit', $rateLimit);
             $response = $client->query($query)->read();
 
@@ -159,6 +166,7 @@ class FormPppoe extends Form implements FormCrudInterface
                 'validity' => $this->validity,
                 'validity_unit' => $this->validityUnit,
                 'type' => $this->type,
+                'description' => $this->description,
             ]);
 
         } catch (\Exception $e) {

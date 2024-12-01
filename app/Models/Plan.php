@@ -19,7 +19,8 @@ class Plan extends Model
         'validity_unit',
         'type',
         'star',
-        'star_downgrade'
+        'star_downgrade',
+        'description'
     ];
 
     public function bandwidth()
