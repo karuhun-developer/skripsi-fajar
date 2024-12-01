@@ -130,7 +130,6 @@ class FormPool extends Form implements FormCrudInterface
             }
 
 
-
         } catch (\Exception $e) {
             throw new \Exception($e->getMessage());
         }
@@ -139,22 +138,27 @@ class FormPool extends Form implements FormCrudInterface
     // Delete data
     public function delete($id)
     {
-        $pool = Pool::find($id)->delete();
-        $router = $pool->router;
+        try {
+            $pool = Pool::find($id);
+            $router = $pool->router;
 
-        // Delete from Mikrotik
-        $client = new Client([
-            'host' => $router->ip_address,
-            'user' => $router->username,
-            'pass' => $router->password,
-            'port' => $router->port,
-        ]);
+            // Delete from Mikrotik
+            $client = new Client([
+                'host' => $router->ip_address,
+                'user' => $router->username,
+                'pass' => $router->password,
+                'port' => $router->port,
+            ]);
 
-        $query = new Query('/ip/pool/remove');
-        $query->equal('.id', $pool->star);
-        $response = $client->query($query)->read();
+            $query = new Query('/ip/pool/remove');
+            $query->equal('.id', $pool->star);
+            $response = $client->query($query)->read();
 
-        if (isset($response['after']['message'])) throw new \Exception('Pool not found');
+            if (isset($response['after']['message'])) throw new \Exception('Pool not found');
+            $pool->delete();
+        } catch (\Exception $e) {
+            throw new \Exception($e->getMessage());
+        }
 
     }
 }
