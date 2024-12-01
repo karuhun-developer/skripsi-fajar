@@ -32,14 +32,15 @@ class FormPppoe extends Form implements FormCrudInterface
     #[Validate('required')]
     public $validity;
 
-     #[Validate('required')]
+    #[Validate('required')]
     public $validityUnit;
 
-     #[Validate('required')]
+    #[Validate('required')]
     public $bandwidthId;
     public $type = 'PPPOE';
 
     public $description;
+
     // Get the data
     public function getDetail($id)
     {
@@ -178,36 +179,30 @@ class FormPppoe extends Form implements FormCrudInterface
     // Delete data
     public function delete($id)
     {
-        try {
 
+        $data = PlanModel::find($id);
+        $dataPool = Pool::where('id', $data->pool_id)->first();
+        $client = new Client([
+            'host' => $dataPool->router->ip_address,
+            'user' => $dataPool->router->username,
+            'pass' => $dataPool->router->password,
+            'port' => $dataPool->router->port,
+        ]);
 
-            $data = PlanModel::find($id);
-            $dataPool = Pool::where('id', $data->pool_id)->first();
-            $client = new Client([
-                'host' => $dataPool->router->ip_address,
-                'user' => $dataPool->router->username,
-                'pass' => $dataPool->router->password,
-                'port' => $dataPool->router->port,
-            ]);
+        $query = new Query('/ppp/profile/remove');
+        $query->equal('.id', $data->star);
 
-            $query = new Query('/ppp/profile/remove');
-            $query->equal('.id', $data->star);
+        //star downgrade
+        $query2 = new Query('/ppp/profile/remove');
+        $query2->equal('.id', $data->star_downgrade);
 
-            //star downgrade
-            $query2 = new Query('/ppp/profile/remove');
-            $query2->equal('.id', $data->star_downgrade);
+        $response = $client->query($query)->query($query2)->read();
 
-            $response = $client->query($query)->query($query2)->read();
-
-            if (isset($response['after']['message'])) {
-                throw new \Exception("Profile not found");
-            }
-
-            PlanModel::find($id)->delete();
-
-        } catch (\Exception $e) {
-            throw new \Exception($e->getMessage());
+        if (isset($response['after']['message'])) {
+            throw new \Exception("Profile not found");
         }
+
+        PlanModel::find($id)->delete();
 
     }
 }

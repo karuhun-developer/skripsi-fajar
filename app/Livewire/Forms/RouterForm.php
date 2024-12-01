@@ -59,30 +59,25 @@ class RouterForm extends Form implements FormCrudInterface
     // Store data
     public function store()
     {
-        try {
 
-            $client = new Client([
-                'host' => $this->ipaddress,
-                'user' => $this->username,
-                'pass' => $this->password,
-                'port' => (int) $this->port,
+        $client = new Client([
+            'host' => $this->ipaddress,
+            'user' => $this->username,
+            'pass' => $this->password,
+            'port' => (int)$this->port,
+        ]);
+        //
+        $response = $client->connect();
+
+        if ($response) {
+            Router::create([
+                'name' => $this->name,
+                'ip_address' => $this->ipaddress,
+                'port' => $this->port,
+                'username' => $this->username,
+                'password' => $this->password,
+                'description' => $this->description,
             ]);
-            //
-            $response = $client->connect();
-
-            if ($response) {
-                Router::create([
-                    'name' => $this->name,
-                    'ip_address' => $this->ipaddress,
-                    'port' => $this->port,
-                    'username' => $this->username,
-                    'password' => $this->password,
-                    'description' => $this->description,
-                ]);
-            }
-
-        } catch (\Exception $e) {
-            throw new \Exception($e->getMessage());
         }
 
     }
@@ -90,31 +85,26 @@ class RouterForm extends Form implements FormCrudInterface
     // Update data
     public function update()
     {
-        try {
-            $router = Router::find($this->id);
+        $router = Router::find($this->id);
 
-            $client = new Client([
-                'host' => $this->ipaddress,
-                'user' => $this->username,
-                'pass' => $this->password,
-                'port' => (int) $this->port,
+        $client = new Client([
+            'host' => $this->ipaddress,
+            'user' => $this->username,
+            'pass' => $this->password,
+            'port' => (int)$this->port,
+        ]);
+
+        $response = $client->connect();
+
+        if ($response) {
+            $router->update([
+                'name' => $this->name,
+                'ip_address' => $this->ipaddress,
+                'port' => $this->port,
+                'username' => $this->username,
+                'password' => $this->password,
+                'description' => $this->description,
             ]);
-
-            $response = $client->connect();
-
-            if ($response) {
-                $router->update([
-                    'name' => $this->name,
-                    'ip_address' => $this->ipaddress,
-                    'port' => $this->port,
-                    'username' => $this->username,
-                    'password' => $this->password,
-                    'description' => $this->description,
-                ]);
-            }
-
-        } catch (\Exception $e) {
-            throw new \Exception($e->getMessage());
         }
     }
 

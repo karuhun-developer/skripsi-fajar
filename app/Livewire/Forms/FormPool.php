@@ -64,38 +64,32 @@ class FormPool extends Form implements FormCrudInterface
 
     public function store()
     {
-        try {
-            $router = \App\Models\Router::find($this->routerId);
-            $client = new Client([
-                'host' => $router->ip_address,
-                'user' => $router->username,
-                'pass' => $router->password,
-                'port' => $router->port,
-            ]);
+        $router = \App\Models\Router::find($this->routerId);
+        $client = new Client([
+            'host' => $router->ip_address,
+            'user' => $router->username,
+            'pass' => $router->password,
+            'port' => $router->port,
+        ]);
 
-            $query = new Query('/ip/pool/add');
-            $query->equal('name', $this->name);
-            $query->equal('comment', $this->description);
-            $query->equal('ranges', $this->rangeIp);
+        $query = new Query('/ip/pool/add');
+        $query->equal('name', $this->name);
+        $query->equal('comment', $this->description);
+        $query->equal('ranges', $this->rangeIp);
 
-            $response = $client->query($query)->read();
-            if (isset($response['after']['message'])) {
-                throw new \Exception($response['after']['message']);
-            }
-
-            Pool::create([
-                'name' => $this->name,
-                'local_ip' => $this->localIp,
-                'range_ip' => $this->rangeIp,
-                'description' => $this->description,
-                'star' => $response['after']['ret'],
-                'router_id' => $this->routerId,
-            ]);
-
-
-        } catch (\Exception $e) {
-            throw new \Exception($e->getMessage());
+        $response = $client->query($query)->read();
+        if (isset($response['after']['message'])) {
+            throw new \Exception($response['after']['message']);
         }
+
+        Pool::create([
+            'name' => $this->name,
+            'local_ip' => $this->localIp,
+            'range_ip' => $this->rangeIp,
+            'description' => $this->description,
+            'star' => $response['after']['ret'],
+            'router_id' => $this->routerId,
+        ]);
     }
 
     // Update data
@@ -138,27 +132,23 @@ class FormPool extends Form implements FormCrudInterface
     // Delete data
     public function delete($id)
     {
-        try {
-            $pool = Pool::find($id);
-            $router = $pool->router;
+        $pool = Pool::find($id);
+        $router = $pool->router;
 
-            // Delete from Mikrotik
-            $client = new Client([
-                'host' => $router->ip_address,
-                'user' => $router->username,
-                'pass' => $router->password,
-                'port' => $router->port,
-            ]);
+        // Delete from Mikrotik
+        $client = new Client([
+            'host' => $router->ip_address,
+            'user' => $router->username,
+            'pass' => $router->password,
+            'port' => $router->port,
+        ]);
 
-            $query = new Query('/ip/pool/remove');
-            $query->equal('.id', $pool->star);
-            $response = $client->query($query)->read();
+        $query = new Query('/ip/pool/remove');
+        $query->equal('.id', $pool->star);
+        $response = $client->query($query)->read();
 
-            if (isset($response['after']['message'])) throw new \Exception('Pool not found');
-            $pool->delete();
-        } catch (\Exception $e) {
-            throw new \Exception($e->getMessage());
-        }
+        if (isset($response['after']['message'])) throw new \Exception('Pool not found');
+        $pool->delete();
 
     }
 }
