@@ -91,13 +91,8 @@ class FormPool extends Form implements FormCrudInterface
             'router_id' => $this->routerId,
         ]);
     }
-
-    // Update data
-    // app/Livewire/Forms/FormPool.php
-
     public function update()
     {
-        try {
             $router = \App\Models\Router::find($this->routerId);
             Pool::find($this->id)->update([
                 'name' => $this->name,
@@ -122,11 +117,6 @@ class FormPool extends Form implements FormCrudInterface
             if (isset($response['after']['message'])) {
                 throw new \Exception($response['after']['message']);
             }
-
-
-        } catch (\Exception $e) {
-            throw new \Exception($e->getMessage());
-        }
     }
 
     // Delete data

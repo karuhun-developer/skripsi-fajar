@@ -74,105 +74,95 @@ class FormPppoe extends Form implements FormCrudInterface
     // Store data
     public function store()
     {
-        try {
-            $dataBandwidth = Bandwidth::where('id', $this->bandwidthId)->first();
-            $dataPool = Pool::where('id', $this->poolId)->first();
-            $rateLimit = $dataBandwidth->rate_download . 'M/' . $dataBandwidth->rate_upload . 'M ' . $dataBandwidth->burst;
-            $rateLimitDowngrade = $dataBandwidth->downgradedBandwidth->rate_download . 'M/' . $dataBandwidth->downgradedBandwidth->rate_upload . 'M ' . $dataBandwidth->burst;
+        $dataBandwidth = Bandwidth::where('id', $this->bandwidthId)->first();
+        $dataPool = Pool::where('id', $this->poolId)->first();
+        $rateLimit = $dataBandwidth->rate_download . 'M/' . $dataBandwidth->rate_upload . 'M ' . $dataBandwidth->burst;
+        $rateLimitDowngrade = $dataBandwidth->downgradedBandwidth->rate_download . 'M/' . $dataBandwidth->downgradedBandwidth->rate_upload . 'M ' . $dataBandwidth->burst;
 
-            $client = new Client([
-                'host' => $dataPool->router->ip_address,
-                'user' => $dataPool->router->username,
-                'pass' => $dataPool->router->password,
-                'port' => $dataPool->router->port,
+        $client = new Client([
+            'host' => $dataPool->router->ip_address,
+            'user' => $dataPool->router->username,
+            'pass' => $dataPool->router->password,
+            'port' => $dataPool->router->port,
+        ]);
+
+
+        $query = new Query('/ppp/profile/add');
+        $query->equal('name', $this->name);
+        $query->equal('local-address', $dataPool->local_ip);
+        $query->equal('remote-address', $dataPool->name);
+        $query->equal('rate-limit', $rateLimit);
+        $query->equal('comment', $this->description);
+
+        $response = $client->query($query)->read();
+
+        if (isset($response['after']['message'])) {
+            throw new \Exception($response['after']['message']);
+        }
+
+        $star = $response['after']['ret'];
+
+        //create downgraded plan
+        $query = new Query('/ppp/profile/add');
+        $query->equal('name', $this->name . '_DOWNGRADE_50');
+        $query->equal('local-address', $dataPool->local_ip);
+        $query->equal('remote-address', $dataPool->name);
+        $query->equal('rate-limit', $rateLimitDowngrade);
+        $response = $client->query($query)->read();
+        $starDowngrade = $response['after']['ret'];
+
+        if ($response['after']['ret'] != null) {
+            PlanModel::create([
+                'name' => $this->name,
+                'bandwidth_id' => $this->bandwidthId,
+                'pool_id' => $this->poolId,
+                'price' => currencyToNumber($this->price),
+                'validity' => $this->validity,
+                'validity_unit' => $this->validityUnit,
+                'type' => $this->type,
+                'star' => $star,
+                'star_downgrade' => $starDowngrade,
+                'description' => $this->description,
             ]);
-
-
-            $query = new Query('/ppp/profile/add');
-            $query->equal('name', $this->name);
-            $query->equal('local-address', $dataPool->local_ip);
-            $query->equal('remote-address', $dataPool->name);
-            $query->equal('rate-limit', $rateLimit);
-            $query->equal('comment', $this->description);
-
-            $response = $client->query($query)->read();
-
-            if (isset($response['after']['message'])) {
-                throw new \Exception($response['after']['message']);
-            }
-
-            $star = $response['after']['ret'];
-
-            //create downgraded plan
-            $query = new Query('/ppp/profile/add');
-            $query->equal('name', $this->name . '_DOWNGRADE_50');
-            $query->equal('local-address', $dataPool->local_ip);
-            $query->equal('remote-address', $dataPool->name);
-            $query->equal('rate-limit', $rateLimitDowngrade);
-            $response = $client->query($query)->read();
-            $starDowngrade = $response['after']['ret'];
-
-            if ($response['after']['ret'] != null) {
-                PlanModel::create([
-                    'name' => $this->name,
-                    'bandwidth_id' => $this->bandwidthId,
-                    'pool_id' => $this->poolId,
-                    'price' => currencyToNumber($this->price),
-                    'validity' => $this->validity,
-                    'validity_unit' => $this->validityUnit,
-                    'type' => $this->type,
-                    'star' => $star,
-                    'star_downgrade' => $starDowngrade,
-                    'description' => $this->description,
-                ]);
-            }
-
-        } catch (\Exception $e) {
-            throw new \Exception($e->getMessage());
         }
     }
 
     // Update data
     public function update()
     {
-        try {
-            $dataBandwidth = Bandwidth::where('id', $this->bandwidthId)->first();
-            $dataPool = Pool::where('id', $this->poolId)->first();
-            $rateLimit = $dataBandwidth->rate_download . 'M/' . $dataBandwidth->rate_upload . 'M ' . $dataBandwidth->burst;
+        $dataBandwidth = Bandwidth::where('id', $this->bandwidthId)->first();
+        $dataPool = Pool::where('id', $this->poolId)->first();
+        $rateLimit = $dataBandwidth->rate_download . 'M/' . $dataBandwidth->rate_upload . 'M ' . $dataBandwidth->burst;
 
-            $client = new Client([
-                'host' => $dataPool->router->ip_address,
-                'user' => $dataPool->router->username,
-                'pass' => $dataPool->router->password,
-                'port' => $dataPool->router->port,
-            ]);
+        $client = new Client([
+            'host' => $dataPool->router->ip_address,
+            'user' => $dataPool->router->username,
+            'pass' => $dataPool->router->password,
+            'port' => $dataPool->router->port,
+        ]);
 
-            $query = new Query('/ppp/profile/set');
-            $query->equal('name', $this->name);
-            $query->equal('local-address', $dataPool->local_ip);
-            $query->equal('remote-address', $dataPool->name);
-            $query->equal('comment', $this->description);
-            $query->equal('rate-limit', $rateLimit);
-            $response = $client->query($query)->read();
+        $query = new Query('/ppp/profile/set');
+        $query->equal('name', $this->name);
+        $query->equal('local-address', $dataPool->local_ip);
+        $query->equal('remote-address', $dataPool->name);
+        $query->equal('comment', $this->description);
+        $query->equal('rate-limit', $rateLimit);
+        $response = $client->query($query)->read();
 
-            if (isset($response['after']['message'])) {
-                throw new \Exception($response['after']['message']);
-            }
-
-            PlanModel::find($this->id)->update([
-                'name' => $this->name,
-                'bandwidth_id' => $this->bandwidthId,
-                'pool_id' => $this->poolId,
-                'price' => $this->price,
-                'validity' => $this->validity,
-                'validity_unit' => $this->validityUnit,
-                'type' => $this->type,
-                'description' => $this->description,
-            ]);
-
-        } catch (\Exception $e) {
-            throw new \Exception($e->getMessage());
+        if (isset($response['after']['message'])) {
+            throw new \Exception($response['after']['message']);
         }
+
+        PlanModel::find($this->id)->update([
+            'name' => $this->name,
+            'bandwidth_id' => $this->bandwidthId,
+            'pool_id' => $this->poolId,
+            'price' => $this->price,
+            'validity' => $this->validity,
+            'validity_unit' => $this->validityUnit,
+            'type' => $this->type,
+            'description' => $this->description,
+        ]);
 
     }
 
