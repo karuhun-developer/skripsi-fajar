@@ -31,6 +31,8 @@ class FormPool extends Form implements FormCrudInterface
     public $routerId;
 
     // Get the data
+    public $description;
+
     public function getDetail($id)
     {
         $data = Pool::find($id);
@@ -40,6 +42,7 @@ class FormPool extends Form implements FormCrudInterface
         $this->rangeIp = $data->range_ip;
         $this->star = $data->star;
         $this->routerId = $data->router_id;
+        $this->description = $data->description;
     }
 
     // Save the data
@@ -72,6 +75,7 @@ class FormPool extends Form implements FormCrudInterface
 
             $query = new Query('/ip/pool/add');
             $query->equal('name', $this->name);
+            $query->equal('comment', $this->description);
             $query->equal('ranges', $this->rangeIp);
 
             $response = $client->query($query)->read();
@@ -83,6 +87,7 @@ class FormPool extends Form implements FormCrudInterface
                 'name' => $this->name,
                 'local_ip' => $this->localIp,
                 'range_ip' => $this->rangeIp,
+                'description' => $this->description,
                 'star' => $response['after']['ret'],
                 'router_id' => $this->routerId,
             ]);
@@ -104,6 +109,7 @@ class FormPool extends Form implements FormCrudInterface
                 'name' => $this->name,
                 'local_ip' => $this->localIp,
                 'range_ip' => $this->rangeIp,
+                'description' => $this->description,
             ]);
             $client = new Client([
                 'host' => $router->ip_address,
@@ -116,6 +122,7 @@ class FormPool extends Form implements FormCrudInterface
             $query->equal('.id', $this->star);
             $query->equal('name', $this->name);
             $query->equal('ranges', $this->rangeIp);
+            $query->equal('comment', $this->description);
             $response = $client->query($query)->read();
 
             if (isset($response['after']['message'])) {

@@ -86,7 +86,12 @@
                 </div>
             @endif
 
-
+            <div class="col-md-12">
+                <div class="mb-3">
+                    <label class="form-label">Description</label>
+                    <x-acc-input type="textarea" model="form.description" placeholder="Description" />
+                </div>
+            </div>
         </x-acc-form>
     </x-acc-modal>
 

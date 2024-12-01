@@ -15,7 +15,8 @@ class Pool extends Model
         'local_ip',
         'range_ip',
         'star',
-        'router_id'
+        'router_id',
+        'description'
     ];
 
     public function router()
