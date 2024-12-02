@@ -10,7 +10,7 @@
 
 	<title>{{ $title ?? '' }}</title>
 
-	<link rel="stylesheet" href="https://unpkg.com/@adminkit/core@latest/dist/css/app.css">
+	<link rel="stylesheet" href="{{ asset('cms-assets') }}/css/app.css">
 	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 
@@ -24,7 +24,7 @@
 		</div>
 	</div>
 
-    <script src="https://unpkg.com/@adminkit/core@latest/dist/js/app.js" data-navigate-once="true"></script>
+    <script src="{{ asset("cms-assets") }}/js/app.js" data-navigate-once="true"></script>
 
 </body>
 
