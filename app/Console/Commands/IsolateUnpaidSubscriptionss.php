@@ -58,6 +58,44 @@ class IsolateUnpaidSubscriptionss extends Command
         $query->equal('profile', "pppoe-expired");
         $response = $client->query($query)->read();
 
+        if (isset($response['after']['message'])) {
+            throw new \Exception($response['after']['message']);
+        }
+
+        $this->clearPppoeConnection($router, $user->pppoe_username);
+
         $subscription = Subscription::where('user_id', $user->id)->where('status', 'throttle')->update(['status' => 'isolated']);
+    }
+
+    function clearPppoeConnection($router, $pppoeUser)
+    {
+        try {
+
+            $client = new Client([
+                'host' => $router->ip_address,
+                'user' => $router->username,
+                'pass' => $router->password,
+                'port' => (int) $router->port,
+            ]);
+
+
+            $query = new Query('/ppp/active/print');
+            $query->where('name', $pppoeUser);
+            $response = $client->query($query)->read();
+
+            if (!empty($response)) {
+                // Remove active connection
+                $activeId = $response[0]['.id'];
+                $removeQuery = new Query('/ppp/active/remove');
+                $removeQuery->equal('.id', $activeId);
+                $client->query($removeQuery)->read();
+
+                echo "Active connection for user {$pppoeUser} has been cleared.";
+            } else {
+                echo "No active connection found for user {$pppoeUser}.";
+            }
+        } catch (\Exception $e) {
+            echo "Error: " . $e->getMessage();
+        }
     }
 }
