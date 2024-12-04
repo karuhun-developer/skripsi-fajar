@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Forms;
 
+use App\Helper\MikrotikApi;
 use App\Livewire\Contracts\FormCrudInterface;
 use App\Models\Router;
 use Livewire\Attributes\Validate;
@@ -60,7 +61,7 @@ class RouterForm extends Form implements FormCrudInterface
     public function store()
     {
 
-        $client = new Client([
+        $client = new MikrotikApi([
             'host' => $this->ipaddress,
             'user' => $this->username,
             'pass' => $this->password,
@@ -87,7 +88,7 @@ class RouterForm extends Form implements FormCrudInterface
     {
         $router = Router::find($this->id);
 
-        $client = new Client([
+        $client = new MikrotikApi([
             'host' => $this->ipaddress,
             'user' => $this->username,
             'pass' => $this->password,
