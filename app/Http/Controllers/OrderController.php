@@ -92,13 +92,19 @@ class OrderController extends Controller
                 'host' => $user->plan->pool->router->ip_address,
                 'user' => $user->plan->pool->router->username,
                 'pass' => $user->plan->pool->router->password,
-                'port' => 8728,
+                'port' => $user->plan->pool->router->port,
             ]);
             $query = new Query('/ppp/secret/set');
             $query->equal('.id', $user->star);
             $query->equal('profile', $plan->name);
 
             $response = $client->query(endpoint: $query)->read();
+
+            if (isset($response['after']['message'])) {
+                throw new \Exception($response['after']['message']);
+            }
+
+            $this->clearPppoeConnection($user->plan->pool->router, $user->pppoe_username);
 
         } catch (BadCredentialsException $e) {
 
@@ -119,5 +125,37 @@ class OrderController extends Controller
             'start_at' => $subscription->start_at->addDays(30),
             'expired_at' => $subscription->expired_at->addDays(60),
         ]);
+    }
+
+    function clearPppoeConnection($router, $pppoeUser)
+    {
+        try {
+
+            $client = new Client([
+                'host' => $router->ip_address,
+                'user' => $router->username,
+                'pass' => $router->password,
+                'port' => (int) $router->port,
+            ]);
+
+
+            $query = new Query('/ppp/active/print');
+            $query->where('name', $pppoeUser);
+            $response = $client->query($query)->read();
+
+            if (!empty($response)) {
+                // Remove active connection
+                $activeId = $response[0]['.id'];
+                $removeQuery = new Query('/ppp/active/remove');
+                $removeQuery->equal('.id', $activeId);
+                $client->query($removeQuery)->read();
+
+                echo "Active connection for user {$pppoeUser} has been cleared.";
+            } else {
+                echo "No active connection found for user {$pppoeUser}.";
+            }
+        } catch (\Exception $e) {
+            echo "Error: " . $e->getMessage();
+        }
     }
 }
