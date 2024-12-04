@@ -48,6 +48,7 @@ class CheckUnpaidSubscriptions extends Command
             'host' => $router->ip_address,
             'user' => $router->username,
             'pass' => $router->password,
+            'port' => $router->port,
         ]);
 
         $query = new Query('/ppp/secret/set');
