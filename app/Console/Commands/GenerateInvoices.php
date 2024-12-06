@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Subscription;
 use App\Models\SubscriptionPayment;
+use App\Services\PaymentLinkGenerator;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -43,55 +44,16 @@ class GenerateInvoices extends Command
 
     public function generatePaymentLink($user, $plan, $subscription)
     {
-        $orderId = uniqid();
-        $params = [
-            'transaction_details' => [
-                'order_id' => $orderId,
-                'gross_amount' => $plan->price,
-                'payment_link_id' => 'akses-net-' . $user->id . '-' . $plan->id . '-' . uniqid(),
-            ],
-            'customer_required' => true,
-            'usage_limit' => 1,
-            'expiry' => [
-                'start_time' => now()->format('Y-m-d H:i:s') . ' +0700',
-                'duration' => 20,
-                'unit' => 'days',
-            ],
-            'item_details' => [
-                [
-                    'id' => $plan->id,
-                    'name' => $plan->name,
-                    'price' => $plan->price,
-                    'quantity' => 1,
-                    'brand' => 'ID Fiber',
-                    'category' => 'Internet',
-                    'merchant_name' => 'PT. Media Akses Data',
-                ],
-            ],
-            'customer_details' => [
-                'first_name' => $user->name,
-                'last_name' => $user->name,
-                'email' => $user->email,
-                'phone' => '+62181000000000',
-            ],
-        ];
+        $response = PaymentLinkGenerator::generate($user, $plan, $subscription);
 
-        $midtransServerKey = env('MIDTRANS_SERVER_KEY');
-        $midtransPaymentLink = env('MIDTRANS_PAYMENT_LINK');
+        $paymentLink = $response['payment_url'];
 
-        $response = Http::withBasicAuth($midtransServerKey, '')->post(
-            $midtransPaymentLink,
-            $params
-        );
+        if ($response['successful']) {
 
-        $paymentLink = $response->json()['payment_url'];
-        // Handle the response if needed
-        if ($response->successful()) {
-            // Log or perform any action if needed
             SubscriptionPayment::create([
                 'subscription_id' => $subscription->id,
                 'bill_amount' => $plan->price,
-                'order_id' => $orderId,
+                'order_id' => uniqid(),
                 'payment_link' => $paymentLink,
                 'status' => 'pending',
                 'created_at' => now(),
@@ -100,7 +62,6 @@ class GenerateInvoices extends Command
             $subscription->update(['invoice_generated_at' => now()]);
 
         } else {
-            // Handle the error
             $this->error('Failed to generate payment link for user: ' . $user->email);
         }
     }
