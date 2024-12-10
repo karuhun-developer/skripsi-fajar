@@ -44,7 +44,8 @@ class GenerateInvoices extends Command
 
     public function generatePaymentLink($user, $plan, $subscription)
     {
-        $response = PaymentLinkGenerator::generate($user, $plan, $subscription);
+        $orderId = uniqid();
+        $response = PaymentLinkGenerator::generate($orderId, $user, $plan, $subscription);
 
         $paymentLink = $response['payment_url'];
 
@@ -53,7 +54,7 @@ class GenerateInvoices extends Command
             SubscriptionPayment::create([
                 'subscription_id' => $subscription->id,
                 'bill_amount' => $plan->price,
-                'order_id' => uniqid(),
+                'order_id' => $orderId,
                 'payment_link' => $paymentLink,
                 'status' => 'pending',
                 'created_at' => now(),

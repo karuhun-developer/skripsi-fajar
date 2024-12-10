@@ -24,7 +24,14 @@ class OrderController extends Controller
         $orderId = explode('-', $request->order_id,);
         $subscriptionPayment = SubscriptionPayment::where('order_id', $orderId[0])->first();
 
+//        return response()->json(['message' => $orderId]);
+
+        if (!$subscriptionPayment) {
+            return response()->json(['message' => 'Subscription payment not found'], 404);
+        }
+
         $subscription = $subscriptionPayment->subscription;
+        return response()->json(['message' => $subscription]);
         $user = $subscriptionPayment->subscription->user;
         $plan = $subscriptionPayment->subscription->plan;
 

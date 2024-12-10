@@ -7,9 +7,8 @@ use Illuminate\Support\Facades\Http;
 
 class PaymentLinkGenerator
 {
-    public static function generate($user, $plan, $subscription)
+    public static function generate($orderId, $user, $plan, $subscription)
     {
-        $orderId = uniqid();
         $params = [
             'transaction_details' => [
                 'order_id' => $orderId,
