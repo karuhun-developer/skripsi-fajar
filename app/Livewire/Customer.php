@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Forms\FormCustomer;
 use App\Models\Plan;
 use App\Models\Role;
 use App\Models\User as UserModel;
@@ -9,7 +10,8 @@ use BaseComponent;
 
 class Customer extends BaseComponent
 {
-    public $title = 'Management User';
+    public FormCustomer $form;
+    public $title = 'Management Customer';
 
     public $searchBy = [
         [
@@ -31,13 +33,13 @@ class Customer extends BaseComponent
         $orderBy = 'name',
         $order = 'asc';
 
+    public $plans = [];
     public function mount()
     {
         // Add modal for update password
         $this->addModal('updatePasswordModal');
 
         // Get roles
-        $this->roles = Role::all();
         $this->plans = Plan::all();
     }
 
