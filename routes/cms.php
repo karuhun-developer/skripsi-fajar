@@ -45,4 +45,7 @@ Route::group([
     // Invoice
     Route::get('/invoice', \App\Livewire\Invoice::class)->name('invoice');
 
+    // Invoice
+    Route::get('/list-invoices', \App\Livewire\ListInvoices::class)->name('list-invoices');
+
 });
