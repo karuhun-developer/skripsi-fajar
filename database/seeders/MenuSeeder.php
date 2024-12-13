@@ -108,9 +108,18 @@ class MenuSeeder extends Seeder
             'name' => 'Invoice',
             'on' => 'cms',
             'type' => 'item',
-            'icon' => 'fa fa-cog',
-            'route' => '#',
+            'icon' => 'fa fa-file-invoice',
+            'route' => 'cms.invoice',
             'ordering' => '4',
+        ]);
+
+        $invoice = Menu::create([
+            'name' => 'List Invoice',
+            'on' => 'cms',
+            'type' => 'item',
+            'icon' => 'fa fa-file-invoice',
+            'route' => 'cms.list-invoice',
+            'ordering' => '5',
         ]);
     }
 }

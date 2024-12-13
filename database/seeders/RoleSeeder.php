@@ -41,6 +41,8 @@ class RoleSeeder extends Seeder
         $admin = Role::findOrCreate('admin', 'web');
         $user = Role::findOrCreate('default', 'web');
         $customer = Role::findOrCreate('customer', 'web');
+        $finance = Role::findOrCreate('finance', 'web');
+        $noc = Role::findOrCreate('noc', 'web');
 
         // Generate Permission
         // Get all route names
@@ -62,6 +64,8 @@ class RoleSeeder extends Seeder
                         $user->givePermissionTo($permission);
                     }
                     $customer->givePermissionTo($permission);
+                    $finance->givePermissionTo($permission);
+                    $noc->givePermissionTo($permission);
                 }
             }
         }
