@@ -14,12 +14,6 @@
                     <thead>
                     <tr>
                         <x-acc-loop-th :$searchBy :$orderBy :$order/>
-                        <th>Plan</th>
-                        <th>Start At</th>
-                        <th>Expired At</th>
-                        <th>Status</th>
-                        <th>Validity</th>
-                        <th>Type</th>
                         <th>Action</th>
 
                     </tr>
@@ -30,12 +24,6 @@
                             <td>{{ $d->name }}</td>
                             <td>{{ $d->email }}</td>
                             <td>{{ $d->roles[0]?->name }}</td>
-                            <td>{{ $d->plan->name ?? 'N/A' }}</td>
-                            <td>{{ $d->plan->subscriptions[0]->start_at ?? 'N/A' }}</td>
-                            <td>{{ $d->plan->subscriptions[0]->expired_at ?? 'N/A' }}</td>
-                            <td>{{ $d->plan->subscriptions[0]->status ?? 'N/A' }}</td>
-                            <td>{{ $d->plan->validity ?? 'N/A'}} {{ $d->plan->validity_unit ?? '' }}</td>
-                            <td>{{ $d->plan->type ?? 'N/A'}}</td>
 
 
                             <x-acc-update-delete :id="$d->id" :$originRoute>
@@ -87,44 +75,6 @@
                     <x-acc-input type="email" model="form.email" placeholder="Email"/>
                 </div>
             </div>
-
-            @if ($form->role == 'customer')
-                <div class="col-md-12">
-                    <hr>
-                    <div class="mb-3">
-{{--                        <label class="form-label">Plan</label>--}}
-{{--                        <x-acc-input type="select" :live="true" model="form.planId">--}}
-{{--                            <option value="">--Select Plan--</option>--}}
-{{--                            @foreach($plans as $plan)--}}
-{{--                                <option value="{{ $plan->id }}">{{ $plan->name }}</option>--}}
-{{--                            @endforeach--}}
-{{--                        </x-acc-input>--}}
-                        <label class="form-label">Plan</label>
-                        <select class="form-control" wire:model="form.planId">
-                            <option value="">Select Plan</option>
-                            @foreach($plans as $plan)
-                                <option value="{{ $plan->id }}">{{ $plan->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-
-                <div class="col-md-12">
-                    <div class="mb-3">
-                        <label class="form-label">PPPOE Username</label>
-                        <x-acc-input type="text" model="form.pppoeUsername" placeholder="PPPOE Username"/>
-                    </div>
-                </div>
-
-                <div class="col-md-12">
-                    <div class="mb-3">
-                        <label class="form-label">PPPOE Password</label>
-                        <x-acc-input type="password" model="form.pppoePassword" placeholder="PPPOE Password"/>
-                    </div>
-                </div>
-
-            @endif
-
             @if(!$isUpdate)
                 <div class="col-md-12">
                     <div class="mb-3">

@@ -50,8 +50,11 @@ class User extends BaseComponent
 
     public function render()
     {
-        $model = UserModel::with(['roles', 'plan.subscriptions',]);
-
+//        $model = UserModel::with(['roles', 'plan.subscriptions',]);
+        //fetch only user with role not customer
+        $model = UserModel::whereHas('roles', function ($query) {
+            $query->where('name', '!=', 'customer');
+        })->with(['roles', 'plan.subscriptions',]);
 
         $get = $this->getDataWithFilter(
             model: $model,

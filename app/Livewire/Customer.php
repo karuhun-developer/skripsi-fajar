@@ -12,7 +12,7 @@ use BaseComponent;
 class Customer extends BaseComponent
 {
     public FormCustomer $form;
-    public $title = 'Management Customer';
+    public $title = 'Management PPPoE User';
 
     public $searchBy = [
         [
