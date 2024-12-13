@@ -113,7 +113,7 @@ class MenuSeeder extends Seeder
             'ordering' => '4',
         ]);
 
-        $invoice = Menu::create([
+        $listInvoice = Menu::create([
             'name' => 'List Invoice',
             'on' => 'cms',
             'type' => 'item',
