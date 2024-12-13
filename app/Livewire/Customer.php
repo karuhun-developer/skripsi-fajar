@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Enums\Alert;
 use App\Livewire\Forms\FormCustomer;
 use App\Models\Plan;
 use App\Models\Role;
@@ -22,10 +23,6 @@ class Customer extends BaseComponent
             'name' => 'Email',
             'field' => 'email',
         ],
-        [
-            'name' => 'Role',
-            'field' => 'roles.name',
-        ],
     ],
         $search = '',
         $isUpdate = false,
@@ -34,12 +31,14 @@ class Customer extends BaseComponent
         $order = 'asc';
 
     public $plans = [];
+    public $roles = [];
     public function mount()
     {
         // Add modal for update password
         $this->addModal('updatePasswordModal');
 
         // Get roles
+        $this->roles = Role::all();
         $this->plans = Plan::all();
     }
 
@@ -66,5 +65,27 @@ class Customer extends BaseComponent
         }
 
         return view('livewire.customer', compact('get'))->title($this->title);
+    }
+
+    public function closeModalUpdatePassword()
+    {
+        $this->closeModal('updatePasswordModal');
+    }
+
+    public function changePassword()
+    {
+        $this->form->changePassword();
+        $this->closeModalUpdatePassword();
+
+        session()->flash('success', 'Password has been changed');
+    }
+
+    public function customSave()
+    {
+        try {
+            $this->save();
+        } catch (\Exception $e) {
+            $this->dispatch('alert', type: Alert::error->value, message: $e->getMessage());
+        }
     }
 }

@@ -29,7 +29,6 @@
                         <tr>
                             <td>{{ $d->name }}</td>
                             <td>{{ $d->email }}</td>
-                            <td>{{ $d->roles[0]?->name }}</td>
                             <td>{{ $d->plan->name ?? 'N/A' }}</td>
                             <td>{{ $d->plan->subscriptions[0]->start_at ?? 'N/A' }}</td>
                             <td>{{ $d->plan->subscriptions[0]->expired_at ?? 'N/A' }}</td>
