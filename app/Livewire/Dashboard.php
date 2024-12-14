@@ -37,7 +37,7 @@ class Dashboard extends Component
     public function render()
     {
 
-        if(auth()->user()->hasRole(['admin'])) {
+        if(auth()->user()->hasRole(['admin', 'noc', 'finance'])) {
             return view('livewire.dashboard', [
                 'userCounts' => $this->userCounts,
             ]);
