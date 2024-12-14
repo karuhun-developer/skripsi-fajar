@@ -16,28 +16,26 @@
         </button>
         <ul class="dropdown-menu" aria-labelledby="update-delete-dropdown-{{ $id }}">
             @if($edit)
-                @can('update.' . $originRoute)
-                    <li>
-                        <button
-                            class="dropdown-item"
-                            wire:click="{{ $editFunction }}('{{ $id }}')"
-                        >
-                            <i class="fa fa-pencil"></i> Edit
-                        </button>
-                    </li>
-                @endcan
+                <li>
+                    <button
+                        class="dropdown-item"
+                        wire:click="{{ $editFunction }}('{{ $id }}')"
+                        @cannot('update.' . $originRoute) disabled @endcannot
+                    >
+                        <i class="fa fa-pencil"></i> Edit
+                    </button>
+                </li>
             @endif
             @if($delete)
-                @can('delete.' . $originRoute)
-                    <li>
-                        <button
-                            class="dropdown-item"
-                            wire:click="{{ $deleteFunction }}('{{ $id }}')"
-                        >
-                            <i class="fa fa-trash"></i> Delete
-                        </button>
-                    </li>
-                @endcan
+                <li>
+                    <button
+                        class="dropdown-item"
+                        wire:click="{{ $deleteFunction }}('{{ $id }}')"
+                        @cannot('delete.' . $originRoute) disabled @endcannot
+                    >
+                        <i class="fa fa-trash"></i> Delete
+                    </button>
+                </li>
             @endif
             {{ $slot ?? '' }}
         </ul>
