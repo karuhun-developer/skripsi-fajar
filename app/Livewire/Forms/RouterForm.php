@@ -5,6 +5,7 @@ namespace App\Livewire\Forms;
 use App\Helper\MikrotikClient;
 use App\Livewire\Contracts\FormCrudInterface;
 use App\Models\Router;
+use App\Services\MikrotikService;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
 use RouterOS\Client;
@@ -30,6 +31,8 @@ class RouterForm extends Form implements FormCrudInterface
     public $password;
 
     public $description;
+    private $mikrotikService;
+
 
     // Get the data
     public function getDetail($id)
@@ -60,15 +63,12 @@ class RouterForm extends Form implements FormCrudInterface
     // Store data
     public function store()
     {
-
-        $client = new MikrotikClient([
-            'host' => $this->ipaddress,
-            'user' => $this->username,
-            'pass' => $this->password,
-            'port' => (int)$this->port,
-        ]);
-        //
-        $response = $client->connect();
+        $this->mikrotikService = new MikrotikService(
+            $this->ipaddress,
+            $this->username,
+            $this->password,
+            $this->port
+        );
 
         if ($response) {
             Router::create([

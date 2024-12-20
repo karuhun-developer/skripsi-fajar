@@ -10,15 +10,19 @@ class MikrotikService
 {
     protected $client;
 
-    public function __construct($routerId)
+    public function __construct($username, $password, $host, $port)
     {
-        $router = Router::find($routerId);
         $this->client = new Client([
-            'host' => $router->ip_address,
-            'user' => $router->username,
-            'pass' => $router->password,
-            'port' => $router->port,
+            'host' => $host,
+            'user' => $username,
+            'pass' => $password,
+            'port' => $port,
         ]);
+    }
+
+    public function connect()
+    {
+        return $this->client->connect();
     }
 
     public function addPool($name, $description, $rangeIp)

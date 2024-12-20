@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Forms;
 
+use App\Models\Router;
 use App\Services\MikrotikService;
 use Livewire\Form;
 use RouterOS\Query;
@@ -34,6 +35,7 @@ class FormPool extends Form implements FormCrudInterface
     // Get the data
     public $description;
     protected $mikrotikService;
+
     public function getDetail($id)
     {
         $data = Pool::find($id);
@@ -44,15 +46,6 @@ class FormPool extends Form implements FormCrudInterface
         $this->star = $data->star;
         $this->routerId = $data->router_id;
         $this->description = $data->description;
-    }
-
-    protected function getMikrotikService()
-    {
-        if (!$this->mikrotikService || $this->mikrotikService->getRouterId() !== $this->routerId) {
-            $this->mikrotikService = new MikrotikService($this->routerId);
-        }
-
-        return $this->mikrotikService;
     }
 
     // Save the data
@@ -74,7 +67,13 @@ class FormPool extends Form implements FormCrudInterface
 
     public function store()
     {
-        $mikrotikService = $this->getMikrotikService();
+        $router = Router::find($this->routerId);
+        $mikrotikService = new MikrotikService(
+            $router->username,
+            $router->password,
+            $router->ip_address,
+            $router->port
+        );
         $response = $mikrotikService->addPool($this->name, $this->description, $this->rangeIp);
 
         if (isset($response['after']['message'])) {
@@ -90,28 +89,34 @@ class FormPool extends Form implements FormCrudInterface
             'router_id' => $this->routerId,
         ]);
     }
+
     public function update()
     {
-            $pool = Pool::find($this->id);
+        $pool = Pool::find($this->id);
 
-            $pool->update([
-                'name' => $this->name,
-                'local_ip' => $this->localIp,
-                'range_ip' => $this->rangeIp,
-                'description' => $this->description,
-            ]);
+        $pool->update([
+            'name' => $this->name,
+            'local_ip' => $this->localIp,
+            'range_ip' => $this->rangeIp,
+            'description' => $this->description,
+        ]);
 
-            $mikrotikService = $this->getMikrotikService();
-            $response = $mikrotikService->updatePool(
-                $pool->star,
-                $this->name,
-                $this->rangeIp,
-                $this->description
-            );
+        $mikrotikService = new MikrotikService(
+            $pool->router->username,
+            $pool->router->password,
+            $pool->router->ip_address,
+            $pool->router->port
+        );
+        $response = $mikrotikService->updatePool(
+            $pool->star,
+            $this->name,
+            $this->rangeIp,
+            $this->description
+        );
 
-            if (isset($response['after']['message'])) {
-                throw new \Exception($response['after']['message']);
-            }
+        if (isset($response['after']['message'])) {
+            throw new \Exception($response['after']['message']);
+        }
     }
 
     // Delete data
@@ -120,7 +125,12 @@ class FormPool extends Form implements FormCrudInterface
         $pool = Pool::find($id);
         $router = $pool->router;
 
-        $mikrotikService = new MikrotikService($router->id);
+        $mikrotikService = new MikrotikService(
+            $router->username,
+            $router->password,
+            $router->ip_address,
+            $router->port
+        );
         $response = $mikrotikService->deletePool($pool->star);
 
         if (isset($response['after']['message'])) throw new \Exception('Pool not found');

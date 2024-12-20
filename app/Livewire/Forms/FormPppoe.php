@@ -83,7 +83,12 @@ class FormPppoe extends Form implements FormCrudInterface
         $rateLimit = $dataBandwidth->rate_download . 'M/' . $dataBandwidth->rate_upload . 'M ' . $dataBandwidth->burst;
         $rateLimitDowngrade = $dataBandwidth->downgradedBandwidth->rate_download . 'M/' . $dataBandwidth->downgradedBandwidth->rate_upload . 'M ' . $dataBandwidth->burst;
 
-        $this->mikrotikService = new MikrotikService($dataPool->router_id);
+        $this->mikrotikService = new MikrotikService(
+            $dataPool->router->username,
+            $dataPool->router->password,
+            $dataPool->router->ip_address,
+            $dataPool->router->port
+        );
         $response = $this->mikrotikService->createPppoeProfile(
             $this->name,
             $dataPool->local_ip,
@@ -134,7 +139,12 @@ class FormPppoe extends Form implements FormCrudInterface
         $rateLimit = $dataBandwidth->rate_download . 'M/' . $dataBandwidth->rate_upload . 'M ' . $dataBandwidth->burst;
         $rateLimitDowngrade = $dataBandwidth->downgradedBandwidth->rate_download . 'M/' . $dataBandwidth->downgradedBandwidth->rate_upload . 'M ' . $dataBandwidth->burst;
 
-        $this->mikrotikService = new MikrotikService($dataPool->router_id);
+        $this->mikrotikService = new MikrotikService(
+            $dataPool->router->username,
+            $dataPool->router->password,
+            $dataPool->router->ip_address,
+            $dataPool->router->port
+        );
         $response = $this->mikrotikService->updatePppoeProfile(
             $plan->star,
             $this->name,
@@ -180,7 +190,13 @@ class FormPppoe extends Form implements FormCrudInterface
         $data = PlanModel::find($id);
         $dataPool = Pool::where('id', $data->pool_id)->first();
 
-        $this->mikrotikService = new MikrotikService($dataPool->router_id);
+        $this->mikrotikService = new MikrotikService(
+            $dataPool->router->username,
+            $dataPool->router->password,
+            $dataPool->router->ip_address,
+            $dataPool->router->port
+        );
+
         $this->mikrotikService->deletePppoeProfile($data->star);
         $this->mikrotikService->deletePppoeProfile($data->star_downgrade);
         PlanModel::find($id)->delete();
