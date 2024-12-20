@@ -92,7 +92,9 @@ class FormPool extends Form implements FormCrudInterface
     }
     public function update()
     {
-            Pool::find($this->id)->update([
+            $pool = Pool::find($this->id);
+
+            $pool->update([
                 'name' => $this->name,
                 'local_ip' => $this->localIp,
                 'range_ip' => $this->rangeIp,
@@ -101,7 +103,7 @@ class FormPool extends Form implements FormCrudInterface
 
             $mikrotikService = $this->getMikrotikService();
             $response = $mikrotikService->updatePool(
-                $this->star,
+                $pool->star,
                 $this->name,
                 $this->rangeIp,
                 $this->description

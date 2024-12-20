@@ -49,4 +49,74 @@ class MikrotikService
 
         return $this->client->query($query)->read();
     }
+
+    public function createPppoeProfile($name, $localAddress, $remoteAddress, $rateLimit, $comment)
+    {
+        $query = new Query('/ppp/profile/add');
+        $query->equal('name', $name);
+        $query->equal('local-address', $localAddress);
+        $query->equal('remote-address', $remoteAddress);
+        $query->equal('rate-limit', $rateLimit);
+        $query->equal('comment', $comment);
+
+        return $this->client->query($query)->read();
+    }
+
+    public function updatePppoeProfile($id, $name, $localAddress, $remoteAddress, $rateLimit, $comment)
+    {
+        $query = new Query('/ppp/profile/set');
+        $query->equal('.id', $id);
+        $query->equal('name', $name);
+        $query->equal('local-address', $localAddress);
+        $query->equal('remote-address', $remoteAddress);
+        $query->equal('rate-limit', $rateLimit);
+        $query->equal('comment', $comment);
+
+        return $this->client->query($query)->read();
+    }
+
+    public function deletePppoeProfile($id)
+    {
+        $query = new Query('/ppp/profile/remove');
+        $query->equal('.id', $id);
+
+        return $this->client->query($query)->read();
+    }
+
+    public function createPppoeSecret($name, $password, $service, $profile, $localAddress, $remoteAddress, $comment)
+    {
+        $query = new Query('/ppp/secret/add');
+        $query->equal('name', $name);
+        $query->equal('password', $password);
+        $query->equal('service', $service);
+        $query->equal('profile', $profile);
+        $query->equal('local-address', $localAddress);
+        $query->equal('remote-address', $remoteAddress);
+        $query->equal('comment', $comment);
+
+        return $this->client->query($query)->read();
+    }
+
+    public function updatePppoeSecret($id, $name, $password, $service, $profile, $localAddress, $remoteAddress, $comment)
+    {
+        $query = new Query('/ppp/secret/set');
+        $query->equal('.id', $id);
+        $query->equal('name', $name);
+        $query->equal('password', $password);
+        $query->equal('service', $service);
+        $query->equal('profile', $profile);
+        $query->equal('local-address', $localAddress);
+        $query->equal('remote-address', $remoteAddress);
+        $query->equal('comment', $comment);
+
+        return $this->client->query($query)->read();
+    }
+
+    public function deletePppoeSecret($id)
+    {
+        $query = new Query('/ppp/secret/remove');
+        $query->equal('.id', $id);
+
+        return $this->client->query($query)->read();
+    }
 }

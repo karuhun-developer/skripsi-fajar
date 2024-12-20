@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Forms;
 
+use App\Services\MikrotikService;
 use Livewire\Form;
 use RouterOS\Query;
 use App\Models\Pool;
@@ -16,6 +17,8 @@ class FormPppoe extends Form implements FormCrudInterface
 {
     #[Validate('nullable|numeric')]
     public $id;
+
+    public $routerId;
 
     #[Validate('required')]
     public $name;
@@ -40,6 +43,7 @@ class FormPppoe extends Form implements FormCrudInterface
     public $type = 'PPPOE';
 
     public $description;
+    private $mikrotikService;
 
     // Get the data
     public function getDetail($id)
@@ -79,22 +83,13 @@ class FormPppoe extends Form implements FormCrudInterface
         $rateLimit = $dataBandwidth->rate_download . 'M/' . $dataBandwidth->rate_upload . 'M ' . $dataBandwidth->burst;
         $rateLimitDowngrade = $dataBandwidth->downgradedBandwidth->rate_download . 'M/' . $dataBandwidth->downgradedBandwidth->rate_upload . 'M ' . $dataBandwidth->burst;
 
-        $client = new Client([
-            'host' => $dataPool->router->ip_address,
-            'user' => $dataPool->router->username,
-            'pass' => $dataPool->router->password,
-            'port' => $dataPool->router->port,
-        ]);
-
-
-        $query = new Query('/ppp/profile/add');
-        $query->equal('name', $this->name);
-        $query->equal('local-address', $dataPool->local_ip);
-        $query->equal('remote-address', $dataPool->name);
-        $query->equal('rate-limit', $rateLimit);
-        $query->equal('comment', $this->description);
-
-        $response = $client->query($query)->read();
+        $this->mikrotikService = new MikrotikService($dataPool->router_id);
+        $response = $this->mikrotikService->createPppoeProfile(
+            $this->name,
+            $dataPool->local_ip,
+            $dataPool->name,
+            $rateLimit,
+            $this->description);
 
         if (isset($response['after']['message'])) {
             throw new \Exception($response['after']['message']);
@@ -103,28 +98,31 @@ class FormPppoe extends Form implements FormCrudInterface
         $star = $response['after']['ret'];
 
         //create downgraded plan
-        $query = new Query('/ppp/profile/add');
-        $query->equal('name', $this->name . '_DOWNGRADE_50');
-        $query->equal('local-address', $dataPool->local_ip);
-        $query->equal('remote-address', $dataPool->name);
-        $query->equal('rate-limit', $rateLimitDowngrade);
-        $response = $client->query($query)->read();
-        $starDowngrade = $response['after']['ret'];
+        $response2 = $this->mikrotikService->createPppoeProfile(
+            $this->name . '_DOWNGRADE',
+            $dataPool->local_ip,
+            $dataPool->name,
+            $rateLimitDowngrade,
+            $this->description);
 
-        if ($response['after']['ret'] != null) {
-            PlanModel::create([
-                'name' => $this->name,
-                'bandwidth_id' => $this->bandwidthId,
-                'pool_id' => $this->poolId,
-                'price' => currencyToNumber($this->price),
-                'validity' => $this->validity,
-                'validity_unit' => $this->validityUnit,
-                'type' => $this->type,
-                'star' => $star,
-                'star_downgrade' => $starDowngrade,
-                'description' => $this->description,
-            ]);
+        if (isset($response2['after']['message'])) {
+            throw new \Exception($response2['after']['message']);
         }
+
+        $starDowngrade = $response2['after']['ret'];
+
+        PlanModel::create([
+            'name' => $this->name,
+            'bandwidth_id' => $this->bandwidthId,
+            'pool_id' => $this->poolId,
+            'price' => currencyToNumber($this->price),
+            'validity' => $this->validity,
+            'validity_unit' => $this->validityUnit,
+            'type' => $this->type,
+            'star' => $star,
+            'star_downgrade' => $starDowngrade,
+            'description' => $this->description,
+        ]);
     }
 
     // Update data
@@ -132,25 +130,34 @@ class FormPppoe extends Form implements FormCrudInterface
     {
         $dataBandwidth = Bandwidth::where('id', $this->bandwidthId)->first();
         $dataPool = Pool::where('id', $this->poolId)->first();
+        $plan = PlanModel::find($this->id);
         $rateLimit = $dataBandwidth->rate_download . 'M/' . $dataBandwidth->rate_upload . 'M ' . $dataBandwidth->burst;
+        $rateLimitDowngrade = $dataBandwidth->downgradedBandwidth->rate_download . 'M/' . $dataBandwidth->downgradedBandwidth->rate_upload . 'M ' . $dataBandwidth->burst;
 
-        $client = new Client([
-            'host' => $dataPool->router->ip_address,
-            'user' => $dataPool->router->username,
-            'pass' => $dataPool->router->password,
-            'port' => $dataPool->router->port,
-        ]);
-
-        $query = new Query('/ppp/profile/set');
-        $query->equal('name', $this->name);
-        $query->equal('local-address', $dataPool->local_ip);
-        $query->equal('remote-address', $dataPool->name);
-        $query->equal('comment', $this->description);
-        $query->equal('rate-limit', $rateLimit);
-        $response = $client->query($query)->read();
+        $this->mikrotikService = new MikrotikService($dataPool->router_id);
+        $response = $this->mikrotikService->updatePppoeProfile(
+            $plan->star,
+            $this->name,
+            $dataPool->local_ip,
+            $dataPool->name,
+            $rateLimit,
+            $this->description);
 
         if (isset($response['after']['message'])) {
             throw new \Exception($response['after']['message']);
+        }
+
+        //update downgrade plan
+        $response2 = $this->mikrotikService->updatePppoeProfile(
+            $plan->star_downgrade,
+            $this->name . '_DOWNGRADE',
+            $dataPool->local_ip,
+            $dataPool->name,
+            $rateLimitDowngrade,
+            $this->description);
+
+        if (isset($response2['after']['message'])) {
+            throw new \Exception($response2['after']['message']);
         }
 
         PlanModel::find($this->id)->update([
@@ -172,26 +179,10 @@ class FormPppoe extends Form implements FormCrudInterface
 
         $data = PlanModel::find($id);
         $dataPool = Pool::where('id', $data->pool_id)->first();
-        $client = new Client([
-            'host' => $dataPool->router->ip_address,
-            'user' => $dataPool->router->username,
-            'pass' => $dataPool->router->password,
-            'port' => $dataPool->router->port,
-        ]);
 
-        $query = new Query('/ppp/profile/remove');
-        $query->equal('.id', $data->star);
-
-        //star downgrade
-        $query2 = new Query('/ppp/profile/remove');
-        $query2->equal('.id', $data->star_downgrade);
-
-        $response = $client->query($query)->query($query2)->read();
-
-        if (isset($response['after']['message'])) {
-            throw new \Exception("Profile not found");
-        }
-
+        $this->mikrotikService = new MikrotikService($dataPool->router_id);
+        $this->mikrotikService->deletePppoeProfile($data->star);
+        $this->mikrotikService->deletePppoeProfile($data->star_downgrade);
         PlanModel::find($id)->delete();
 
     }
