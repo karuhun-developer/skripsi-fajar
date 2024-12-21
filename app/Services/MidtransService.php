@@ -55,5 +55,13 @@ class MidtransService
             return ['successful' => false];
         }
     }
+
+    public function validateSignature($request)
+    {
+        $serverKey = env('MIDTRANS_SERVER_KEY');
+        $hashedKey = hash('sha512', $request->order_id . $request->status_code . $request->gross_amount . $serverKey);
+
+        return $hashedKey === $request->signature_key;
+    }
 }
 
