@@ -22,7 +22,7 @@ class RouterForm extends Form implements FormCrudInterface
     public $ipaddress;
 
     #[Validate('required|integer')]
-    public $port = 8728;
+    public $port;
 
     #[Validate('required')]
     public $username;

@@ -20,7 +20,7 @@ class MikrotikService
             'host' => $router->ip_address,
             'user' => $router->username,
             'pass' => $router->password,
-            'port' => $router->port,
+            'port' => (int) $router->port,
         ]);
     }
 
@@ -30,7 +30,7 @@ class MikrotikService
             'host' => $ip_address,
             'user' => $username,
             'pass' => $password,
-            'port' => $port,
+            'port' => (int) $port,
         ]);
 
         return $client->connect();
