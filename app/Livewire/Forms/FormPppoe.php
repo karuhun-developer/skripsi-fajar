@@ -150,7 +150,7 @@ class FormPppoe extends Form implements FormCrudInterface
         //update downgrade plan
         $response2 = $this->mikrotikService->updatePppoeProfile(
             $plan->star_downgrade,
-            $this->name . '_DOWNGRADE',
+            $this->name . '_DOWNGRADE_50',
             $dataPool->local_ip,
             $dataPool->name,
             $rateLimitDowngrade,
