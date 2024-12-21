@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Subscription;
 use App\Models\SubscriptionPayment;
+use App\Services\MidtransService;
 use App\Services\PaymentLinkGenerator;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
@@ -30,32 +31,28 @@ class GenerateInvoices extends Command
      */
     public function handle()
     {
-        $subscriptions = Subscription::whereDate('start_at', '<=', DB::raw('CURDATE()'))
-            ->whereNull('invoice_generated_at')
-            ->get();
+//        $subscriptions = Subscription::whereDate('start_at', '<=', DB::raw('CURDATE()'))
+//            ->whereNull('invoice_generated_at')
+//            ->get();
+        $subscriptions = Subscription::due()->get();
         foreach ($subscriptions as $subscription) {
-            $user = $subscription->user;
-            $plan = $subscription->plan;
-            $this->generatePaymentLink($user, $plan, $subscription);
+            $this->generatePaymentLink($subscription);
         }
-
-        $this->info('Invoices generated successfully.');
     }
 
-    public function generatePaymentLink($user, $plan, $subscription)
+    public function generatePaymentLink($subscription)
     {
         $orderId = uniqid();
-        $response = PaymentLinkGenerator::generate($orderId, $user, $plan, $subscription);
-
-        $paymentLink = $response['payment_url'];
+        $response = MidtransService::createPaymentLink($orderId, $subscription->user, $subscription->plan);
 
         if ($response['successful']) {
+            $this->info('Payment link generated for user: ' . $subscription->user->email);
 
             SubscriptionPayment::create([
                 'subscription_id' => $subscription->id,
-                'bill_amount' => $plan->price,
+                'bill_amount' => $subscription->plan->price,
                 'order_id' => $orderId,
-                'payment_link' => $paymentLink,
+                'payment_link' => $response['payment_url'],
                 'status' => 'pending',
                 'created_at' => now(),
             ]);
@@ -63,7 +60,7 @@ class GenerateInvoices extends Command
             $subscription->update(['invoice_generated_at' => now()]);
 
         } else {
-            $this->error('Failed to generate payment link for user: ' . $user->email);
+            $this->error('Failed to generate payment link for user: ' . $subscription->user->email);
         }
     }
 }

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class Subscription extends Model
 {
@@ -32,5 +33,11 @@ class Subscription extends Model
     public function plan(): BelongsTo
     {
         return $this->belongsTo(Plan::class);
+    }
+
+    public function scopeDue($query)
+    {
+        return $query->whereDate('start_at', '<=', DB::raw('CURDATE()'))
+            ->whereNull('invoice_generated_at');
     }
 }
