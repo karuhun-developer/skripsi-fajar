@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Subscription;
 use App\Models\SubscriptionPayment;
+use App\Services\MidtransService;
 use Illuminate\Http\Request;
 use RouterOS\Client;
 use RouterOS\Exceptions\BadCredentialsException;
@@ -15,60 +16,42 @@ use RouterOS\Query;
 
 class OrderController extends Controller
 {
+    protected $midtransService;
+    public function __construct(MidtransService $midtransService)
+    {
+        $this->midtransService = $midtransService;
+    }
+
     public function callback(Request $request)
     {
-
-
-        $serverKey = getenv('MIDTRANS_SERVER_KEY');
-        $hashedKey = hash('sha512', $request->order_id . $request->status_code . $request->gross_amount . $serverKey);
-        $orderId = explode('-', $request->order_id,);
-        $subscriptionPayment = SubscriptionPayment::where('order_id', $orderId[0])->first();
-
-//        return response()->json(['message' => $orderId]);
+        $orderId = explode('-', $request->order_id)[0];
+        $subscriptionPayment = SubscriptionPayment::where('order_id', $orderId)->first();
 
         if (!$subscriptionPayment) {
             return response()->json(['message' => 'Subscription payment not found'], 404);
         }
 
         $subscription = $subscriptionPayment->subscription;
-        return response()->json(['message' => $subscription]);
-        $user = $subscriptionPayment->subscription->user;
-        $plan = $subscriptionPayment->subscription->plan;
+        $user = $subscription->user;
+        $plan = $subscription->plan;
 
-        if ($hashedKey !== $request->signature_key) {
+        if (!$this->midtransService->validateSignature($request)) {
             return response()->json(['message' => 'Invalid signature key'], 403);
         }
 
-        $transactionStatus = $request->transaction_status;
+        $this->handleTransactionStatus($request->transaction_status, $subscriptionPayment, $subscription, $user, $plan);
 
+        return response()->json(['message' => 'Callback received successfully']);
+    }
 
-        switch ($transactionStatus){
+    protected function handleTransactionStatus($transactionStatus, $subscriptionPayment, $subscription, $user, $plan)
+    {
+        switch ($transactionStatus) {
             case 'capture':
-                if ($request->payment_type == 'credit_card') {
-                    if ($request->fraud_status == 'challenge') {
-                        $subscriptionPayment->update(['status' => 'pending']);
-                    } else {
-                        $subscriptionPayment->update(['status' => 'success']);
-                        $subscription->update(['status' => 'active', 'invoice_generated_at' => null]);
-                        $this->updateSubscriptionExpiry($subscription);
-                        $this->setPppoeProfile($user, $plan);
-
-                    }
-                }
+                $this->handleCapture($subscriptionPayment, $subscription, $user, $plan);
                 break;
             case 'settlement':
-                $subscriptionPayment->update([
-                    'status' => 'success']
-                );
-                $subscription->update([
-                    'status' => 'active',
-                    'invoice_generated_at' => null
-                ]);
-
-                $this->updateSubscriptionExpiry($subscription);
-
-                $this->setPppoeProfile($user, $plan);
-
+                $this->handleSettlement($subscriptionPayment, $subscription, $user, $plan);
                 break;
             case 'pending':
                 $subscriptionPayment->update(['status' => 'pending']);
@@ -87,11 +70,30 @@ class OrderController extends Controller
                 $subscriptionPayment->update(['status' => 'unknown']);
                 break;
         }
-
-        return response()->json(['message' => 'Callback received successfully']);
-
+    }
+    protected function handleCapture($subscriptionPayment, $subscription, $user, $plan)
+    {
+        $subscriptionPayment->update(['status' => 'success']);
+        $subscription->update(['status' => 'active', 'invoice_generated_at' => null]);
+        $this->updateSubscriptionExpiry($subscription);
+        $this->setPppoeProfile($user, $plan);
     }
 
+    protected function handleSettlement($subscriptionPayment, $subscription, $user, $plan)
+    {
+        $subscriptionPayment->update(['status' => 'success']);
+        $subscription->update(['status' => 'active', 'invoice_generated_at' => null]);
+        $this->updateSubscriptionExpiry($subscription);
+        $this->setPppoeProfile($user, $plan);
+    }
+
+    protected function updateSubscriptionExpiry($subscription)
+    {
+        $subscription->update([
+            'start_at' => $subscription->start_at->addDays(30),
+            'expired_at' => $subscription->expired_at->addDays(60),
+        ]);
+    }
     private function setPppoeProfile($user, $plan)
     {
         try {
@@ -124,14 +126,6 @@ class OrderController extends Controller
         } catch (QueryException $e) {
 
         }
-    }
-
-    private function updateSubscriptionExpiry($subscription)
-    {
-        $subscription->update([
-            'start_at' => $subscription->start_at->addDays(30),
-            'expired_at' => $subscription->expired_at->addDays(60),
-        ]);
     }
 
     function clearPppoeConnection($router, $pppoeUser)

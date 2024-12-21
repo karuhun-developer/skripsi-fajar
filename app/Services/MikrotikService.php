@@ -3,6 +3,9 @@
 namespace App\Services;
 
 use RouterOS\Client;
+use RouterOS\Exceptions\ClientException;
+use RouterOS\Exceptions\ConfigException;
+use RouterOS\Exceptions\QueryException;
 use RouterOS\Query;
 use App\Models\Router;
 
@@ -127,5 +130,37 @@ class MikrotikService
         $query->equal('.id', $id);
 
         return $this->client->query($query)->read();
+    }
+
+    public function reduceBandwidth($user, $plan)
+    {
+        try {
+            $query = new Query('/ppp/secret/set');
+            $query->equal('.id', $user->star);
+            $query->equal('profile', $plan->name . "_DOWNGRADE_50");
+            $response = $this->client->query($query)->read();
+
+            if (isset($response['after']['message'])) {
+                throw new \Exception($response['after']['message']);
+            }
+            $query = new Query('/ppp/active/print');
+            $query->where('name', $user->pppoe_username);
+            $response = $this->client->query($query)->read();
+
+            if (isset($response['after']['message'])) {
+                throw new \Exception($response['after']['message']);
+            }
+
+            if (!empty($response)) {
+                // Remove active connection
+                $activeId = $response[0]['.id'];
+                $removeQuery = new Query('/ppp/active/remove');
+                $removeQuery->equal('.id', $activeId);
+                return $this->client->query($removeQuery)->read();
+            }
+        } catch (QueryException|ClientException|ConfigException $e) {
+
+        }
+        return null;
     }
 }

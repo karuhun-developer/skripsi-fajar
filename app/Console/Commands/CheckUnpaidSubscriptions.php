@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Services\MikrotikService;
 use RouterOS\Query;
 use RouterOS\Client;
 use App\Models\Subscription;
@@ -44,56 +45,15 @@ class CheckUnpaidSubscriptions extends Command
     private function reduceBandwidth($user, $plan)
     {
         $router = $user->plan->pool->router;
-        $client = new Client([
-            'host' => $router->ip_address,
-            'user' => $router->username,
-            'pass' => $router->password,
-            'port' => $router->port,
-        ]);
+        $mikrotikService = new MikrotikService($router->id);
+        $response = $mikrotikService->reduceBandwidth($user, $plan);
 
-        $query = new Query('/ppp/secret/set');
-        $query->equal('.id', $user->star);
-        $query->equal('profile', $plan->name . "_DOWNGRADE_50");
-        $response = $client->query($query)->read();
-
-        if (isset($response['after']['message'])) {
-            throw new \Exception($response['after']['message']);
-        }
-
-        $this->clearPppoeConnection($router, $user->pppoe_username);
-
-        $subscriptions = Subscription::whereDate('expired_at', DB::raw('CURDATE()'))->update(['status' => 'throttle']);
-    }
-
-    function clearPppoeConnection($router, $pppoeUser)
-    {
-        try {
-
-            $client = new Client([
-                'host' => $router->ip_address,
-                'user' => $router->username,
-                'pass' => $router->password,
-                'port' => (int) $router->port,
-            ]);
-
-
-            $query = new Query('/ppp/active/print');
-            $query->where('name', $pppoeUser);
-            $response = $client->query($query)->read();
-
-            if (!empty($response)) {
-                // Remove active connection
-                $activeId = $response[0]['.id'];
-                $removeQuery = new Query('/ppp/active/remove');
-                $removeQuery->equal('.id', $activeId);
-                $client->query($removeQuery)->read();
-
-                echo "Active connection for user {$pppoeUser} has been cleared.";
-            } else {
-                echo "No active connection found for user {$pppoeUser}.";
-            }
-        } catch (\Exception $e) {
-            echo "Error: " . $e->getMessage();
+        if (!isset($response['after']['message'])){
+            $this->info("Bandwidth for user {$user->pppoe_username} has been reduced by 50%.");
+            $subscriptions = Subscription::whereDate('expired_at', DB::raw('CURDATE()'))
+                ->update(['status' => 'throttle']);
+        }else{
+            $this->error($response['after']['message']);
         }
     }
 }
