@@ -134,12 +134,7 @@ class FormPppoe extends Form implements FormCrudInterface
         $rateLimit = $dataBandwidth->rate_download . 'M/' . $dataBandwidth->rate_upload . 'M ' . $dataBandwidth->burst;
         $rateLimitDowngrade = $dataBandwidth->downgradedBandwidth->rate_download . 'M/' . $dataBandwidth->downgradedBandwidth->rate_upload . 'M ' . $dataBandwidth->burst;
 
-        $this->mikrotikService = new MikrotikService(
-            $dataPool->router->username,
-            $dataPool->router->password,
-            $dataPool->router->ip_address,
-            $dataPool->router->port
-        );
+        $this->mikrotikService = new MikrotikService($dataPool->router->id);
         $response = $this->mikrotikService->updatePppoeProfile(
             $plan->star,
             $this->name,
@@ -182,18 +177,13 @@ class FormPppoe extends Form implements FormCrudInterface
     public function delete($id)
     {
 
-        $data = PlanModel::find($id);
-        $dataPool = Pool::where('id', $data->pool_id)->first();
+        $plan = PlanModel::find($id);
+        $pool = Pool::where('id', $plan->pool_id)->first();
 
-        $this->mikrotikService = new MikrotikService(
-            $dataPool->router->username,
-            $dataPool->router->password,
-            $dataPool->router->ip_address,
-            $dataPool->router->port
-        );
+        $this->mikrotikService = new MikrotikService($pool->router->id);
 
-        $this->mikrotikService->deletePppoeProfile($data->star);
-        $this->mikrotikService->deletePppoeProfile($data->star_downgrade);
+        $this->mikrotikService->deletePppoeProfile($plan->star);
+        $this->mikrotikService->deletePppoeProfile($plan->star_downgrade);
         PlanModel::find($id)->delete();
 
     }

@@ -63,17 +63,10 @@ class FormPool extends Form implements FormCrudInterface
     }
 
     // Store data
-    // app/Livewire/Forms/FormPool.php
-
     public function store()
     {
         $router = Router::find($this->routerId);
-        $mikrotikService = new MikrotikService(
-            $router->username,
-            $router->password,
-            $router->ip_address,
-            $router->port
-        );
+        $mikrotikService = new MikrotikService($router->id);
         $response = $mikrotikService->addPool($this->name, $this->description, $this->rangeIp);
 
         if (isset($response['after']['message'])) {
@@ -101,12 +94,7 @@ class FormPool extends Form implements FormCrudInterface
             'description' => $this->description,
         ]);
 
-        $mikrotikService = new MikrotikService(
-            $pool->router->username,
-            $pool->router->password,
-            $pool->router->ip_address,
-            $pool->router->port
-        );
+        $mikrotikService = new MikrotikService($pool->router_id);
         $response = $mikrotikService->updatePool(
             $pool->star,
             $this->name,
@@ -125,15 +113,10 @@ class FormPool extends Form implements FormCrudInterface
         $pool = Pool::find($id);
         $router = $pool->router;
 
-        $mikrotikService = new MikrotikService(
-            $router->username,
-            $router->password,
-            $router->ip_address,
-            $router->port
-        );
+        $mikrotikService = new MikrotikService($router->id);
         $response = $mikrotikService->deletePool($pool->star);
 
-        if (isset($response['after']['message'])) throw new \Exception('Pool not found');
+        if (isset($response['after']['message'])) throw new \Exception($response['after']['message']);
         $pool->delete();
 
     }
