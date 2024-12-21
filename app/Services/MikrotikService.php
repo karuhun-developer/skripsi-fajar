@@ -10,19 +10,27 @@ class MikrotikService
 {
     protected $client;
 
-    public function __construct($username, $password, $host, $port)
+    public function __construct($routerId)
     {
+        $router = Router::find($routerId);
         $this->client = new Client([
-            'host' => $host,
+            'host' => $router->ip_address,
+            'user' => $router->username,
+            'pass' => $router->password,
+            'port' => $router->port,
+        ]);
+    }
+
+    public static function connect($username, $password, $ip_address, $port)
+    {
+        $client = new Client([
+            'host' => $ip_address,
             'user' => $username,
             'pass' => $password,
             'port' => $port,
         ]);
-    }
 
-    public function connect()
-    {
-        return $this->client->connect();
+        return $client->connect();
     }
 
     public function addPool($name, $description, $rangeIp)
@@ -87,16 +95,13 @@ class MikrotikService
         return $this->client->query($query)->read();
     }
 
-    public function createPppoeSecret($name, $password, $service, $profile, $localAddress, $remoteAddress, $comment)
+    public function createPppoeSecret($name, $password, $service, $profile)
     {
         $query = new Query('/ppp/secret/add');
         $query->equal('name', $name);
         $query->equal('password', $password);
         $query->equal('service', $service);
         $query->equal('profile', $profile);
-        $query->equal('local-address', $localAddress);
-        $query->equal('remote-address', $remoteAddress);
-        $query->equal('comment', $comment);
 
         return $this->client->query($query)->read();
     }

@@ -78,21 +78,16 @@ class FormPppoe extends Form implements FormCrudInterface
     // Store data
     public function store()
     {
-        $dataBandwidth = Bandwidth::where('id', $this->bandwidthId)->first();
-        $dataPool = Pool::where('id', $this->poolId)->first();
-        $rateLimit = $dataBandwidth->rate_download . 'M/' . $dataBandwidth->rate_upload . 'M ' . $dataBandwidth->burst;
-        $rateLimitDowngrade = $dataBandwidth->downgradedBandwidth->rate_download . 'M/' . $dataBandwidth->downgradedBandwidth->rate_upload . 'M ' . $dataBandwidth->burst;
+        $bandwidth = Bandwidth::where('id', $this->bandwidthId)->first();
+        $pool = Pool::where('id', $this->poolId)->first();
+        $rateLimit = $bandwidth->rate_download . 'M/' . $bandwidth->rate_upload . 'M ' . $bandwidth->burst;
+        $rateLimitDowngrade = $bandwidth->downgradedBandwidth->rate_download . 'M/' . $bandwidth->downgradedBandwidth->rate_upload . 'M ' . $bandwidth->burst;
 
-        $this->mikrotikService = new MikrotikService(
-            $dataPool->router->username,
-            $dataPool->router->password,
-            $dataPool->router->ip_address,
-            $dataPool->router->port
-        );
+        $this->mikrotikService = new MikrotikService($pool->router->id);
         $response = $this->mikrotikService->createPppoeProfile(
             $this->name,
-            $dataPool->local_ip,
-            $dataPool->name,
+            $pool->local_ip,
+            $pool->name,
             $rateLimit,
             $this->description);
 
@@ -105,8 +100,8 @@ class FormPppoe extends Form implements FormCrudInterface
         //create downgraded plan
         $response2 = $this->mikrotikService->createPppoeProfile(
             $this->name . '_DOWNGRADE',
-            $dataPool->local_ip,
-            $dataPool->name,
+            $pool->local_ip,
+            $pool->name,
             $rateLimitDowngrade,
             $this->description);
 
