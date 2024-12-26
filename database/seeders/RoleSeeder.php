@@ -62,10 +62,11 @@ class RoleSeeder extends Seeder
                     // Give pegawai permission
                     if(in_array($route, $this->routeUser)) {
                         $user->givePermissionTo($permission);
+                        $customer->givePermissionTo($permission);
+                        $finance->givePermissionTo($permission);
+                        $noc->givePermissionTo($permission);
                     }
-                    $customer->givePermissionTo($permission);
-                    $finance->givePermissionTo($permission);
-                    $noc->givePermissionTo($permission);
+
                 }
             }
         }

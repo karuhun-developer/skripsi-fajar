@@ -87,7 +87,7 @@ class MenuSeeder extends Seeder
             'name' => 'Plan',
             'on' => 'cms',
             'type' => 'item',
-            'icon' => 'fa fa-cog',
+            'icon' => 'fa-solid fa-cubes',
             'route' => '#',
             'ordering' => '3',
         ]);
@@ -118,8 +118,31 @@ class MenuSeeder extends Seeder
             'on' => 'cms',
             'type' => 'item',
             'icon' => 'fa fa-file-invoice',
-            'route' => 'cms.list-invoice',
+            'route' => '#',
             'ordering' => '5',
+        ]);
+
+        $listInvoice->menuChildren()->create([
+            'name' => 'Invoice',
+            'icon' => '#',
+            'route' => 'cms.list-invoice',
+            'ordering' => '0',
+        ]);
+
+        $customer = Menu::create([
+            'name' => 'Customer',
+            'on' => 'cms',
+            'type' => 'item',
+            'icon' => 'fa-solid fa-users',
+            'route' => '#',
+            'ordering' => '5',
+        ]);
+
+        $customer->menuChildren()->create([
+            'name' => 'List',
+            'icon' => '#',
+            'route' => 'cms.customer',
+            'ordering' => '0',
         ]);
     }
 }
