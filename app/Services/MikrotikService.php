@@ -22,23 +22,19 @@ class MikrotikService
             'host' => $router->ip_address,
             'user' => $router->username,
             'pass' => $router->password,
-            'port' => (int) $router->port,
+            'port' => (int)$router->port,
         ]);
     }
 
     public static function connect($ipaddress, $username, $password, $port)
     {
-        try {
-            $client = new MikrotikClient([
-                'host' => $ipaddress,
-                'user' => $username,
-                'pass' => $password,
-                'port' => (int)$port,
-            ]);
-            return $client->connect();
-        } catch (BadCredentialsException|ConnectException|ClientException|ConfigException|QueryException $e) {
-            return false;
-        }
+        $client = new MikrotikClient([
+            'host' => $ipaddress,
+            'user' => $username,
+            'pass' => $password,
+            'port' => (int)$port,
+        ]);
+        return $client->connect();
 
     }
 
