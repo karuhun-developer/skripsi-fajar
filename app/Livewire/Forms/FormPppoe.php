@@ -84,12 +84,13 @@ class FormPppoe extends Form implements FormCrudInterface
         $rateLimitDowngrade = $bandwidth->downgradedBandwidth->rate_download . 'M/' . $bandwidth->downgradedBandwidth->rate_upload . 'M ' . $bandwidth->burst;
 
         $this->mikrotikService = new MikrotikService($pool->router->id);
-        $response = $this->mikrotikService->createPppoeProfile(
-            $this->name,
-            $pool->local_ip,
-            $pool->name,
-            $rateLimit,
-            $this->description);
+        $response = $this->mikrotikService->executeQuery('/ppp/profile/add', [
+            'name' => $this->name,
+            'local-address' => $pool->local_ip,
+            'remote-address' => $pool->name,
+            'rate-limit' => $rateLimit,
+            'comment' => $this->description
+        ]);
 
         if (isset($response['after']['message'])) {
             throw new \Exception($response['after']['message']);
@@ -98,12 +99,13 @@ class FormPppoe extends Form implements FormCrudInterface
         $star = $response['after']['ret'];
 
         //create downgraded plan
-        $response2 = $this->mikrotikService->createPppoeProfile(
-            $this->name . '_DOWNGRADE',
-            $pool->local_ip,
-            $pool->name,
-            $rateLimitDowngrade,
-            $this->description);
+        $response2 = $this->mikrotikService->executeQuery('/ppp/profile/add', [
+            'name' => $this->name . '_DOWNGRADE_50',
+            'local-address' => $pool->local_ip,
+            'remote-address' => $pool->name,
+            'rate-limit' => $rateLimitDowngrade,
+            'comment' => $this->description
+        ]);
 
         if (isset($response2['after']['message'])) {
             throw new \Exception($response2['after']['message']);
@@ -135,26 +137,28 @@ class FormPppoe extends Form implements FormCrudInterface
         $rateLimitDowngrade = $dataBandwidth->downgradedBandwidth->rate_download . 'M/' . $dataBandwidth->downgradedBandwidth->rate_upload . 'M ' . $dataBandwidth->burst;
 
         $this->mikrotikService = new MikrotikService($dataPool->router->id);
-        $response = $this->mikrotikService->updatePppoeProfile(
-            $plan->star,
-            $this->name,
-            $dataPool->local_ip,
-            $dataPool->name,
-            $rateLimit,
-            $this->description);
+        $response = $this->mikrotikService->executeQuery('/ppp/profile/set', [
+            '.id' => $plan->star,
+            'name' => $this->name,
+            'local-address' => $dataPool->local_ip,
+            'remote-address' => $dataPool->name,
+            'rate-limit' => $rateLimit,
+            'comment' => $this->description
+        ]);
 
         if (isset($response['after']['message'])) {
             throw new \Exception($response['after']['message']);
         }
 
         //update downgrade plan
-        $response2 = $this->mikrotikService->updatePppoeProfile(
-            $plan->star_downgrade,
-            $this->name . '_DOWNGRADE_50',
-            $dataPool->local_ip,
-            $dataPool->name,
-            $rateLimitDowngrade,
-            $this->description);
+        $response2 = $this->mikrotikService->executeQuery('/ppp/profile/set', [
+            '.id' => $plan->star_downgrade,
+            'name' => $this->name . '_DOWNGRADE_50',
+            'local-address' => $dataPool->local_ip,
+            'remote-address' => $dataPool->name,
+            'rate-limit' => $rateLimitDowngrade,
+            'comment' => $this->description
+        ]);
 
         if (isset($response2['after']['message'])) {
             throw new \Exception($response2['after']['message']);
@@ -182,8 +186,13 @@ class FormPppoe extends Form implements FormCrudInterface
 
         $this->mikrotikService = new MikrotikService($pool->router->id);
 
-        $this->mikrotikService->deletePppoeProfile($plan->star);
-        $this->mikrotikService->deletePppoeProfile($plan->star_downgrade);
+        $this->mikrotikService->executeQuery('/ppp/profile/remove', [
+            '.id' => $plan->star
+        ]);
+        $this->mikrotikService->executeQuery('/ppp/profile/remove', [
+            '.id' => $plan->star_downgrade
+        ]);
+
         PlanModel::find($id)->delete();
 
     }
