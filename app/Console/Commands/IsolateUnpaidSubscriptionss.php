@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Subscription;
+use App\Services\MikrotikService;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use RouterOS\Client;
@@ -46,17 +47,12 @@ class IsolateUnpaidSubscriptionss extends Command
     private function isolateInternet($user, $plan)
     {
         $router = $user->plan->pool->router;
-        $client = new Client([
-            'host' => $router->ip_address,
-            'user' => $router->username,
-            'pass' => $router->password,
-            'port' => $router->port,
-        ]);
 
-        $query = new Query('/ppp/secret/set');
-        $query->equal('.id', $user->star);
-        $query->equal('profile', "pppoe-expired");
-        $response = $client->query($query)->read();
+        $mikrotikService = new MikrotikService($router->id);
+        $mikrotikService->executeQuery('/ppp/secret/set', [
+            '.id' => $user->star,
+            'profile' => 'pppoe-expired',
+        ]);
 
         if (isset($response['after']['message'])) {
             throw new \Exception($response['after']['message']);
