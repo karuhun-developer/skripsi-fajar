@@ -61,8 +61,12 @@ class RouterForm extends Form implements FormCrudInterface
     // Store data
     public function store()
     {
-
-        $response = MikrotikService::connect($this->username, $this->password, $this->ipaddress, $this->port);
+        $response = MikrotikService::connect(
+            $this->ipaddress,
+            $this->username,
+            $this->password,
+            $this->port
+        );
 
         if ($response) {
             Router::create([
@@ -82,7 +86,12 @@ class RouterForm extends Form implements FormCrudInterface
     {
         $router = Router::find($this->id);
 
-        $response = MikrotikService::connect($this->username, $this->password, $this->ipaddress, $this->port);
+        $response = MikrotikService::connect(
+            $this->ipaddress,
+            $this->username,
+            $this->password,
+            $this->port
+        );
 
         if ($response) {
             $router->update([

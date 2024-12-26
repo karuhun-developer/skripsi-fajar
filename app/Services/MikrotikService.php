@@ -3,6 +3,11 @@
 namespace App\Services;
 
 use App\Helper\MikrotikClient;
+use RouterOS\Exceptions\BadCredentialsException;
+use RouterOS\Exceptions\ClientException;
+use RouterOS\Exceptions\ConfigException;
+use RouterOS\Exceptions\ConnectException;
+use RouterOS\Exceptions\QueryException;
 use RouterOS\Query;
 use App\Models\Router;
 
@@ -19,6 +24,22 @@ class MikrotikService
             'pass' => $router->password,
             'port' => (int) $router->port,
         ]);
+    }
+
+    public static function connect($ipaddress, $username, $password, $port)
+    {
+        try {
+            $client = new MikrotikClient([
+                'host' => $ipaddress,
+                'user' => $username,
+                'pass' => $password,
+                'port' => (int)$port,
+            ]);
+            return $client->connect();
+        } catch (BadCredentialsException|ConnectException|ClientException|ConfigException|QueryException $e) {
+            return false;
+        }
+
     }
 
     public function executeQuery($path, $params)
