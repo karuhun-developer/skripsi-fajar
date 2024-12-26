@@ -67,7 +67,11 @@ class FormPool extends Form implements FormCrudInterface
     {
         $router = Router::find($this->routerId);
         $mikrotikService = new MikrotikService($router->id);
-        $response = $mikrotikService->addPool($this->name, $this->description, $this->rangeIp);
+        $response = $mikrotikService->executeQuery('/ip/pool/add', [
+            'name' => $this->name,
+            'comment' => $this->description,
+            'ranges' => $this->rangeIp
+        ]);
 
         if (isset($response['after']['message'])) {
             throw new \Exception($response['after']['message']);
@@ -95,12 +99,12 @@ class FormPool extends Form implements FormCrudInterface
         ]);
 
         $mikrotikService = new MikrotikService($pool->router_id);
-        $response = $mikrotikService->updatePool(
-            $pool->star,
-            $this->name,
-            $this->rangeIp,
-            $this->description
-        );
+        $response = $mikrotikService->executeQuery('/ip/pool/set', [
+            '.id' => $pool->star,
+            'name' => $this->name,
+            'ranges' => $this->rangeIp,
+            'comment' => $this->description
+        ]);
 
         if (isset($response['after']['message'])) {
             throw new \Exception($response['after']['message']);
@@ -114,7 +118,9 @@ class FormPool extends Form implements FormCrudInterface
         $router = $pool->router;
 
         $mikrotikService = new MikrotikService($router->id);
-        $response = $mikrotikService->deletePool($pool->star);
+        $response = $mikrotikService->executeQuery('/ip/pool/remove', [
+            '.id' => $pool->star
+        ]);
 
         if (isset($response['after']['message'])) throw new \Exception($response['after']['message']);
         $pool->delete();

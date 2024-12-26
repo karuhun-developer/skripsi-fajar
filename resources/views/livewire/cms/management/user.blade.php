@@ -58,7 +58,9 @@
                     <x-acc-input type="select" :live="true" model="form.role">
                         <option value="">--Select Role--</option>
                         @foreach($roles as $role)
-                            <option value="{{ $role->name }}">{{ $role->name }}</option>
+                            @if($role->name != "customer")
+                                <option value="{{ $role->name }}">{{ $role->name }}</option>
+                            @endif
                         @endforeach
                     </x-acc-input>
                 </div>
