@@ -6,6 +6,7 @@ use App\Livewire\Contracts\FormCrudInterface;
 use App\Models\Plan;
 use App\Models\Subscription;
 use App\Models\User;
+use App\Services\MikrotikService;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
 use RouterOS\Client;
@@ -65,20 +66,15 @@ class FormCustomer extends Form implements FormCrudInterface
             if ($this->role != 'admin') {
                 $plan = Plan::find($this->planId);
                 $router = $plan->pool->router;
-                $client = new Client([
-                    'host' => $router->ip_address,
-                    'user' => $router->username,
-                    'pass' => $router->password,
-                    'port' => $router->port,
+
+                $mikrotikService = new MikrotikService($plan->pool->router_id);
+                $response = $mikrotikService->executeQuery('/ppp/secret/add', [
+                    'name' => $this->pppoeUsername,
+                    'password' => $this->pppoePassword,
+                    'service' => 'pppoe',
+                    'profile' => $plan->name,
                 ]);
 
-                $query = new Query('/ppp/secret/add');
-                $query->equal('name', $this->pppoeUsername);
-                $query->equal('password', $this->pppoePassword);
-                $query->equal('service', 'pppoe');
-                $query->equal('profile', $plan->name);
-                $response = $client->query($query)->read();
-//                dd(isset($response['after']['message']));
                 if (isset($response['after']['message'])) {
                     throw new \Exception($response['after']['message']);
                 }
@@ -157,19 +153,14 @@ class FormCustomer extends Form implements FormCrudInterface
 
         $plan = Plan::find($this->planId);
         $router = $plan->pool->router;
-        $client = new Client([
-            'host' => $router->ip_address,
-            'user' => $router->username,
-            'pass' => $router->password,
-            'port' => $router->port,
-        ]);
 
-        $query = new Query('/ppp/secret/set');
-        $query->equal('.id', $user->star);
-        $query->equal('name', $this->pppoeUsername);
-        $query->equal('password', $this->pppoePassword);
-        $query->equal('profile', $plan->name);
-        $response = $client->query($query)->read();
+        $mikrotikService = new MikrotikService($plan->pool->router_id);
+        $response = $mikrotikService->executeQuery('/ppp/secret/set', [
+            '.id' => $user->star,
+            'name' => $this->pppoeUsername,
+            'password' => $this->pppoePassword,
+            'profile' => $plan->name,
+        ]);
 
         if (isset($response['after']['message'])) {
             throw new \Exception($response['after']['message']);
@@ -211,16 +202,11 @@ class FormCustomer extends Form implements FormCrudInterface
         $user = User::find($id);
         $router = $user->plan->pool->router;
         try {
-            $client = new Client([
-                'host' => $router->ip_address,
-                'user' => $router->username,
-                'pass' => $router->password,
-                'port' => $router->port,
-            ]);
 
-            $query = new Query('/ppp/secret/remove');
-            $query->equal('.id', $user->star);
-            $response = $client->query($query)->read();
+            $mikrotikService = new MikrotikService($user->plan->pool->router_id);
+            $response = $mikrotikService->executeQuery('/ppp/secret/remove', [
+                '.id' => $user->star,
+            ]);
 
             //delete from database
             if ($response == null) {
