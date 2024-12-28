@@ -46,7 +46,10 @@ class CheckUnpaidSubscriptions extends Command
     {
         $router = $user->plan->pool->router;
         $mikrotikService = new MikrotikService($router->id);
-        $response = $mikrotikService->reduceBandwidth($user, $plan);
+        $response = $mikrotikService->executeQuery('/ppp/secret/set', [
+            '.id' => $user->star,
+            'profile' => $plan->name . '_DOWNGRADE_50',
+        ]);
 
         if (!isset($response['after']['message'])){
             $this->info("Bandwidth for user {$user->pppoe_username} has been reduced by 50%.");
