@@ -67,7 +67,7 @@ class FormCustomer extends Form implements FormCrudInterface
                 $plan = Plan::find($this->planId);
                 $router = $plan->pool->router;
 
-                $mikrotikService = new MikrotikService($plan->pool->router_id);
+                $mikrotikService = new MikrotikService($plan->pool->router);
                 $response = $mikrotikService->executeQuery('/ppp/secret/add', [
                     'name' => $this->pppoeUsername,
                     'password' => $this->pppoePassword,
@@ -154,7 +154,7 @@ class FormCustomer extends Form implements FormCrudInterface
         $plan = Plan::find($this->planId);
         $router = $plan->pool->router;
 
-        $mikrotikService = new MikrotikService($plan->pool->router_id);
+        $mikrotikService = new MikrotikService($plan->pool->router);
         $response = $mikrotikService->executeQuery('/ppp/secret/set', [
             '.id' => $user->star,
             'name' => $this->pppoeUsername,
@@ -203,7 +203,7 @@ class FormCustomer extends Form implements FormCrudInterface
         $router = $user->plan->pool->router;
         try {
 
-            $mikrotikService = new MikrotikService($user->plan->pool->router_id);
+            $mikrotikService = new MikrotikService($user->plan->pool->router);
             $response = $mikrotikService->executeQuery('/ppp/secret/remove', [
                 '.id' => $user->star,
             ]);

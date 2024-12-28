@@ -83,7 +83,7 @@ class FormPppoe extends Form implements FormCrudInterface
         $rateLimit = $bandwidth->rate_download . 'M/' . $bandwidth->rate_upload . 'M ' . $bandwidth->burst;
         $rateLimitDowngrade = $bandwidth->downgradedBandwidth->rate_download . 'M/' . $bandwidth->downgradedBandwidth->rate_upload . 'M ' . $bandwidth->burst;
 
-        $this->mikrotikService = new MikrotikService($pool->router->id);
+        $this->mikrotikService = new MikrotikService($pool->router);
         $response = $this->mikrotikService->executeQuery('/ppp/profile/add', [
             'name' => $this->name,
             'local-address' => $pool->local_ip,
@@ -136,7 +136,7 @@ class FormPppoe extends Form implements FormCrudInterface
         $rateLimit = $dataBandwidth->rate_download . 'M/' . $dataBandwidth->rate_upload . 'M ' . $dataBandwidth->burst;
         $rateLimitDowngrade = $dataBandwidth->downgradedBandwidth->rate_download . 'M/' . $dataBandwidth->downgradedBandwidth->rate_upload . 'M ' . $dataBandwidth->burst;
 
-        $this->mikrotikService = new MikrotikService($dataPool->router->id);
+        $this->mikrotikService = new MikrotikService($dataPool->router);
         $response = $this->mikrotikService->executeQuery('/ppp/profile/set', [
             '.id' => $plan->star,
             'name' => $this->name,
@@ -184,7 +184,7 @@ class FormPppoe extends Form implements FormCrudInterface
         $plan = PlanModel::find($id);
         $pool = Pool::where('id', $plan->pool_id)->first();
 
-        $this->mikrotikService = new MikrotikService($pool->router->id);
+        $this->mikrotikService = new MikrotikService($pool->router);
 
         $this->mikrotikService->executeQuery('/ppp/profile/remove', [
             '.id' => $plan->star

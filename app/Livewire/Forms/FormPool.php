@@ -66,7 +66,7 @@ class FormPool extends Form implements FormCrudInterface
     public function store()
     {
         $router = Router::find($this->routerId);
-        $mikrotikService = new MikrotikService($router->id);
+        $mikrotikService = new MikrotikService($router);
         $response = $mikrotikService->executeQuery('/ip/pool/add', [
             'name' => $this->name,
             'comment' => $this->description,
@@ -98,7 +98,7 @@ class FormPool extends Form implements FormCrudInterface
             'description' => $this->description,
         ]);
 
-        $mikrotikService = new MikrotikService($pool->router_id);
+        $mikrotikService = new MikrotikService($pool->router);
         $response = $mikrotikService->executeQuery('/ip/pool/set', [
             '.id' => $pool->star,
             'name' => $this->name,
@@ -117,7 +117,7 @@ class FormPool extends Form implements FormCrudInterface
         $pool = Pool::find($id);
         $router = $pool->router;
 
-        $mikrotikService = new MikrotikService($router->id);
+        $mikrotikService = new MikrotikService($router);
         $response = $mikrotikService->executeQuery('/ip/pool/remove', [
             '.id' => $pool->star
         ]);

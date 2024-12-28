@@ -48,7 +48,7 @@ class IsolateUnpaidSubscriptionss extends Command
     {
         $router = $user->plan->pool->router;
 
-        $mikrotikService = new MikrotikService($router->id);
+        $mikrotikService = new MikrotikService($router);
         $mikrotikService->executeQuery('/ppp/secret/set', [
             '.id' => $user->star,
             'profile' => 'pppoe-expired',

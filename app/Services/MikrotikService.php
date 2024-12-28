@@ -10,9 +10,9 @@ class MikrotikService
 {
     protected $client;
 
-    public function __construct($routerId)
+    public function __construct($router)
     {
-        $router = Router::find($routerId);
+//        $router = Router::find($routerId);
         $this->client = new MikrotikClient([
             'host' => $router->ip_address,
             'user' => $router->username,

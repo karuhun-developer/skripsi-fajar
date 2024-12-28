@@ -45,7 +45,7 @@ class CheckUnpaidSubscriptions extends Command
     private function reduceBandwidth($user, $plan)
     {
         $router = $user->plan->pool->router;
-        $mikrotikService = new MikrotikService($router->id);
+        $mikrotikService = new MikrotikService($router);
         $response = $mikrotikService->executeQuery('/ppp/secret/set', [
             '.id' => $user->star,
             'profile' => $plan->name . '_DOWNGRADE_50',
