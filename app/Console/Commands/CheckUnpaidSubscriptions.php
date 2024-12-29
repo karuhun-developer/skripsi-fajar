@@ -37,6 +37,7 @@ class CheckUnpaidSubscriptions extends Command
         foreach ($subscriptions as $subscription) {
             $user = $subscription->user;
             $this->reduceBandwidth($user);
+            $subscription->update(['status' => 'throttle']);
         }
 
     }
@@ -45,7 +46,6 @@ class CheckUnpaidSubscriptions extends Command
     {
         $router = $user->plan->pool->router;
         $plan = $user->plan;
-        $subscriptions = $user->plan->subscriptions;
         $mikrotikService = new MikrotikService($router);
         $response = $mikrotikService->executeQuery('/ppp/secret/set', [
             '.id' => $user->star,
@@ -54,7 +54,6 @@ class CheckUnpaidSubscriptions extends Command
 
         if (!isset($response['after']['message'])){
             $this->info("Bandwidth for user {$user->pppoe_username} has been reduced by 50%.");
-            $subscriptions->update(['status' => 'throttle']);
         }else{
             $this->error($response['after']['message']);
         }
