@@ -58,7 +58,7 @@ class IsolateUnpaidSubscriptionss extends Command
             throw new \Exception($response['after']['message']);
         }
 
-        $this->info("Internet has been isolated for user {$user->username}.");
+        $this->info("Internet has been isolated for user {$user->pppoe_username}.");
 
         $this->clearPppoeConnection($router, $user->pppoe_username);
 
