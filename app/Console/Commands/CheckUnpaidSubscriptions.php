@@ -36,13 +36,12 @@ class CheckUnpaidSubscriptions extends Command
 
         foreach ($subscriptions as $subscription) {
             $user = $subscription->user;
-            $this->reduceBandwidth($user);
-            $subscription->update(['status' => 'throttle']);
+            $this->reduceBandwidth($user, $subscription);
         }
 
     }
 
-    private function reduceBandwidth($user)
+    private function reduceBandwidth($user, $subscription)
     {
         $router = $user->plan->pool->router;
         $plan = $user->plan;
@@ -53,6 +52,7 @@ class CheckUnpaidSubscriptions extends Command
         ]);
 
         if (!isset($response['after']['message'])){
+            $subscription->update(['status' => 'throttle']);
             $this->info("Bandwidth for user {$user->pppoe_username} has been reduced by 50%.");
         }else{
             $this->error($response['after']['message']);
