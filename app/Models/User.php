@@ -25,7 +25,8 @@ class User extends Authenticatable
         'pppoe_password',
         'pppoe_ip',
         'plan_id',
-        'star'
+        'star',
+        'created_by',
     ];
 
     protected $hidden = [
@@ -41,6 +42,11 @@ class User extends Authenticatable
     public function plan(): BelongsTo
     {
         return $this->belongsTo(Plan::class);
+    }
+
+    public function createdBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     // Get the activity log options.
