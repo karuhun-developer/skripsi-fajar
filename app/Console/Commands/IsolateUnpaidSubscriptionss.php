@@ -58,6 +58,8 @@ class IsolateUnpaidSubscriptionss extends Command
             throw new \Exception($response['after']['message']);
         }
 
+        $this->info("Internet has been isolated for user {$user->username}.");
+
         $this->clearPppoeConnection($router, $user->pppoe_username);
 
         $subscription = Subscription::where('user_id', $user->id)->where('status', 'throttle')->update(['status' => 'isolated']);
@@ -86,9 +88,9 @@ class IsolateUnpaidSubscriptionss extends Command
                 $removeQuery->equal('.id', $activeId);
                 $client->query($removeQuery)->read();
 
-                echo "Active connection for user {$pppoeUser} has been cleared.";
+//                echo "Active connection for user {$pppoeUser} has been cleared.";
             } else {
-                echo "No active connection found for user {$pppoeUser}.";
+//                echo "No active connection found for user {$pppoeUser}.";
             }
         } catch (\Exception $e) {
             echo "Error: " . $e->getMessage();
