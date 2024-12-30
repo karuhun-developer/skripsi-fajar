@@ -1,8 +1,15 @@
 <nav id="sidebar" class="sidebar js-sidebar">
     <div class="sidebar-content js-simplebar">
-        <a class="sidebar-brand" href="{{ route('cms.dashboard') }}">
-            <span class="align-middle">{{ $settings->name }}</span>
-        </a>
+        @if($settings->getFirstMediaUrl('logo'))
+            <a class="sidebar-brand" href="{{ route('cms.dashboard') }}">
+                <img src="{{ asset($settings->getFirstMediaUrl('logo')) }}" class="img-fluid" style="width: 120px">
+            </a>
+        @else
+            <a class="sidebar-brand" href="{{ route('cms.dashboard') }}">
+                <span class="align-middle">{{ $settings->name }}</span>
+            </a>
+        @endif
+        {{--        </a>--}}
 
         <ul class="sidebar-nav">
             @foreach($menus as $menu)
@@ -47,7 +54,8 @@
                                 {{-- Check if has child --}}
                                 @if($hasChild && $menu->type != 'header')
                                     <ul id="menu-{{ \Illuminate\Support\Str::slug($menu->name, '-') }}"
-                                        data-bs-parent class="sidebar-dropdown list-unstyled collapse {{ $isActive ? 'show' : '' }}"
+                                        data-bs-parent
+                                        class="sidebar-dropdown list-unstyled collapse {{ $isActive ? 'show' : '' }}"
                                         data-bs-parent="#sidebar"
                                         x-data="{ totalChild: 0 }">
 
