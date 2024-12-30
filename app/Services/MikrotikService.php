@@ -3,12 +3,13 @@
 namespace App\Services;
 
 use App\Helper\MikrotikClient;
+use App\Models\Router;
 use RouterOS\Query;
 class MikrotikService
 {
     protected $client;
 
-    public function __construct($router)
+    public function __construct(Router $router)
     {
         $this->client = new MikrotikClient([
             'host' => $router->ip_address,
