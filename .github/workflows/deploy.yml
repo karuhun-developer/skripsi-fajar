@@ -46,7 +46,6 @@ jobs:
             ssh-agent bash -c 'ssh-add ~/.ssh/cicd; git pull'
             composer install
             php artisan migrate
-            php artisan db:seed
             php artisan optimize:clear
 
       - name: Update deployment Status (success)
