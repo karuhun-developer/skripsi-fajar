@@ -30,6 +30,7 @@
                             <td>{{ $d->bill_amount }}</td>
                             <td>{{ $d->status }}</td>
                             <td>{{ $d->payment_link }}</td>
+                            <td>{{ $d->created_at }}
                         </tr>
                     @empty
                         <tr>
