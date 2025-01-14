@@ -20,6 +20,7 @@
                         <th>Bill Amount</th>
                         <th>Status</th>
                         <th>Payment Link</th>
+                        <th>Created At</th>
                     </tr>
                     </thead>
                     <tbody>
