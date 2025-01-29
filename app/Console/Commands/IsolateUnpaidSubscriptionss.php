@@ -51,7 +51,7 @@ class IsolateUnpaidSubscriptionss extends Command
         $mikrotikService = new MikrotikService($router);
         $mikrotikService->executeQuery('/ppp/secret/set', [
             '.id' => $user->star,
-            'profile' => 'pppoe-expired',
+            'profile' => 'PROFILE-ISOLATED',
         ]);
 
         if (isset($response['after']['message'])) {
