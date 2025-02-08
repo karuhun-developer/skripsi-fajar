@@ -151,9 +151,9 @@ class OrderController extends Controller
                 $removeQuery->equal('.id', $activeId);
                 $client->query($removeQuery)->read();
 
-                echo "Active connection for user {$pppoeUser} has been cleared.";
+//                echo "Active connection for user {$pppoeUser} has been cleared.";
             } else {
-                echo "No active connection found for user {$pppoeUser}.";
+//                echo "No active connection found for user {$pppoeUser}.";
             }
         } catch (\Exception $e) {
             echo "Error: " . $e->getMessage();

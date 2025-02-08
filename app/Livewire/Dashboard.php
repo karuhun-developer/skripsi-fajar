@@ -2,8 +2,10 @@
 
 namespace App\Livewire;
 
+use App\Helper\MikrotikClient;
 use App\Models\Subscription;
 use App\Models\User;
+use App\Services\MikrotikService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Config;
@@ -42,7 +44,22 @@ class Dashboard extends Component
                 'userCounts' => $this->userCounts,
             ]);
         } else {
-            return view('livewire.dashboard-user');
+
+            $client = new MikrotikClient([
+                'host' => auth()->user()->plan->pool->router->ip_address,
+                'user' => auth()->user()->plan->pool->router->username,
+                'pass' => auth()->user()->plan->pool->router->password,
+                'port' => (int) auth()->user()->plan->pool->router->port,
+            ]);
+
+
+            $query = new Query('/interface/print');
+            $query->where('name', "<pppoe-" . auth()->user()->pppoe_username . ">");
+            $response = $client->query($query)->read();
+
+            return view('livewire.dashboard-user', [
+                'response' => $response,
+            ]);
         }
     }
 }
