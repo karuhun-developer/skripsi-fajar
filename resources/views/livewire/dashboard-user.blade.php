@@ -16,7 +16,7 @@
     <div class="card mb-4">
         <div class="card-header">Total Data Usage</div>
         <div class="card-body">
-            <p><strong>Total Data Used:</strong> {{ number_format(($response[0]['rx-byte'] + $response[0]['tx-byte']) / (1024 * 1024 * 1024), 2) ?? 'N/A' }} GB</p>
+            <p><strong>Total Data Used:</strong> {{ number_format(($response[0]['rx-byte'] ?? 0 + $response[0]['tx-byte'] ?? 0 ) / (1024 * 1024 * 1024), 2) ?? 'N/A' }} GB</p>
             @if(!empty($response))
                 <p><strong>Interface Name:</strong> {{ $response[0]['name'] ?? 'N/A'}}</p>
                 <p><strong>Received Bytes:</strong> {{ $response[0]['rx-byte'] ?? 'N/A' }}</p>
