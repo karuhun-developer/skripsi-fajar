@@ -33,10 +33,19 @@
                             <td>{{ $d->updated_at }}</td>
                             <td>{{ $d->status }}</td>
                             <th>
+                            <!-- if already paid button disabled -->
+                            @if($d->status == 'success')
+                                <button class="btn btn-primary" disabled>
+                                    <i class="fa fa-check"></i>
+                                    Paid
+                                </button>
+                            @else
                                 <a href="{{ $d->payment_link }}" class="btn btn-primary" target="_blank" wire:loading.attr="disabled">
                                     <i class="fa fa-check"></i>
                                     Pay
                                 </a>
+                            @endif
+                                
                             </th>
 
                         </tr>
