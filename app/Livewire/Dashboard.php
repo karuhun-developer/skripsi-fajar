@@ -32,7 +32,7 @@ class Dashboard extends Component
             'active' => Subscription::where('status', 'active')->count(),
             'inactive' => Subscription::where('status', 'inactive')->count(),
             'throttle' => Subscription::where('status', 'throttle')->count(),
-            'pending' => Subscription::where('status', 'pending')->count(),
+            'isolated' => Subscription::where('status', 'isolated')->count(),
         ];
     }
 
