@@ -43,7 +43,6 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Plan::class);
     }
-
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
@@ -55,4 +54,11 @@ class User extends Authenticatable
         return LogOptions::defaults()->logOnly(['name', 'email']);
     }
 
+    public function subscriptions() {
+        return $this->hasMany(Subscription::class);
+    }
+
+    public function latestSubscription() {
+        return $this->hasOne(Subscription::class,'user_id')->latest();
+    }
 }

@@ -47,8 +47,8 @@ class Customer extends BaseComponent
         //get only user with role customer
         $model = UserModel::whereHas('roles', function ($query) {
             $query->where('name', 'customer');
-        })->with(['roles', 'plan.subscriptions',]);
-//        $model = UserModel::with(['roles', 'plan.subscriptions',]);
+        })
+        ->with(['roles', 'latestSubscription', 'plan']);
 
 
         $get = $this->getDataWithFilter(

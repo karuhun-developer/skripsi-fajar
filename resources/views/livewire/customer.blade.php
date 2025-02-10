@@ -29,13 +29,14 @@
                         <tr>
                             <td>{{ $d->name }}</td>
                             <td>{{ $d->email }}</td>
-                            <td>{{ $d->plan->name ?? 'N/A' }}</td>
-                            <td>{{ $d->plan->subscriptions[0]->start_at ?? 'N/A' }}</td>
-                            <td>{{ $d->plan->subscriptions[0]->expired_at ?? 'N/A' }}</td>
-                            <td>{{ $d->plan->subscriptions[0]->status ?? 'N/A' }}</td>
-                            <td>{{ $d->plan->validity ?? 'N/A'}} {{ $d->plan->validity_unit ?? '' }}</td>
-                            <td>{{ $d->plan->type ?? 'N/A'}}</td>
+                            <td>{{ $d?->latestSubscription?->plan->name ?? 'N/A' }}</td>
+                            <td>{{ $d->latestSubscription->start_at ?? 'N/A' }}</td>
+                            <td>{{ $d->latestSubscription->expired_at ?? 'N/A' }}</td>
+                            <td>{{ $d->latestSubscription->status ?? 'N/A' }}</td>
+                            <td>{{ $d?->latestSubscription?->plan->validity ?? 'N/A'}} {{ $d?->latestSubscription?->plan?->validity_unit ?? '' }}</td>
+                            <td>{{ $d?->latestSubscription?->type ?? 'N/A'}}</td>
 
+                            keren
 
                             <x-acc-update-delete :id="$d->id" :$originRoute>
                                 <button class="dropdown-item"
