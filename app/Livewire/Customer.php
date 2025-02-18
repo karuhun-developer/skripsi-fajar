@@ -32,6 +32,8 @@ class Customer extends BaseComponent
 
     public $plans = [];
     public $roles = [];
+    public $status = ['isolated', 'active', 'throttle', 'inactive'];
+    public $whereStatus = null;
     public function mount()
     {
         // Add modal for update password
@@ -50,6 +52,11 @@ class Customer extends BaseComponent
         })
         ->with(['roles', 'latestSubscription', 'plan']);
 
+        if ($this->whereStatus != null) {
+            $model->whereHas('latestSubscription', function ($query) {
+                $query->where('status', $this->whereStatus);
+            });
+        }
 
         $get = $this->getDataWithFilter(
             model: $model,

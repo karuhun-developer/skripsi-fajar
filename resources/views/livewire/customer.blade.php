@@ -8,7 +8,21 @@
             <h5 class="card-title">{{ $title ?? '' }} Data</h5>
         </div>
         <div class="card-body">
-            <x-acc-header :$originRoute/>
+            <x-acc-header :$originRoute>
+                <div class="row">
+                    <div class="col-md-12">
+                            <div class="mt-3">
+                                <label class="form-label fw-bold">Status</label>
+                                <select class="form-control" wire:model.live="whereStatus">
+                                    <option value="">--Select Status--</option>
+                                    @foreach ($status as $s)
+                                        <option value="{{ $s }}">{{ $s }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                    </div>
+                </div>    
+            </x-acc-header>
             <div class="table-responsive">
                 <x-acc-table>
                     <thead>
