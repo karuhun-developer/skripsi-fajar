@@ -29,8 +29,8 @@
                     <tr>
                         <x-acc-loop-th :$searchBy :$orderBy :$order/>
                         <th>Plan</th>
-                        <th>Start At</th>
-                        <th>Expired At</th>
+                        <th>Subscription Start</th>
+                        <th>Expiration Date</th>
                         <th>Status</th>
                         <th>Validity</th>
                         <th>Type</th>
@@ -39,33 +39,51 @@
                     </tr>
                     </thead>
                     <tbody>
-                    @forelse($get as $d)
-                        <tr>
-                            <td>{{ $d->name }}</td>
-                            <td>{{ $d->email }}</td>
-                            <td>{{ $d?->latestSubscription?->plan->name ?? 'N/A' }}</td>
-                            <td>{{ $d->latestSubscription->start_at ?? 'N/A' }}</td>
-                            <td>{{ $d->latestSubscription->expired_at ?? 'N/A' }}</td>
-                            <td>{{ $d->latestSubscription->status ?? 'N/A' }}</td>
-                            <td>{{ $d?->latestSubscription?->plan->validity ?? 'N/A'}} {{ $d?->latestSubscription?->plan?->validity_unit ?? '' }}</td>
-                            <td>{{ $d?->latestSubscription?->type ?? 'N/A'}}</td>
-
-                            keren
-
-                            <x-acc-update-delete :id="$d->id" :$originRoute>
-                                <button class="dropdown-item"
-                                        wire:click="editPassword('{{ $d->id }}')">
-                                    <i class="fa fa-key"></i> Change Password
-                                </button>
-                            </x-acc-update-delete>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="100" class="text-center">
-                                No Data Found
-                            </td>
-                        </tr>
-                    @endforelse
+                        @forelse($get as $d)
+                            @php
+                                $statusClass = '';
+                                switch ($d->latestSubscription->status ?? 'N/A') {
+                                    case 'active':
+                                        $statusClass = 'table-success';
+                                        break;
+                                    case 'inactive':
+                                        $statusClass = 'table-secondary';
+                                        break;
+                                    case 'throttle':
+                                        $statusClass = 'table-warning';
+                                        break;
+                                    case 'isolated':
+                                        $statusClass = 'table-danger';
+                                        break;
+                                    default:
+                                        $statusClass = '';
+                                        break;
+                                }
+                            @endphp
+                            <tr class="{{ $statusClass }}">
+                                <td>{{ $d->name }}</td>
+                                <td>{{ $d->email }}</td>
+                                <td>{{ $d?->latestSubscription?->plan->name ?? 'N/A' }}</td>
+                                <td>{{ optional($d->latestSubscription->start_at)->format('Y-m-d') ?? 'N/A' }}</td>
+                                <td>{{optional($d->latestSubscription->expired_at)->format('Y-m-d') ?? 'N/A' }}</td>
+                                <td>{{ $d->latestSubscription->status ?? 'N/A' }}</td>
+                                <td>{{ $d?->latestSubscription?->plan->validity ?? 'N/A'}} {{ $d?->latestSubscription?->plan?->validity_unit ?? '' }}</td>
+                                <td>{{ $d?->latestSubscription?->type ?? 'N/A'}}</td>
+                    
+                                <x-acc-update-delete :id="$d->id" :$originRoute>
+                                    <button class="dropdown-item"
+                                            wire:click="editPassword('{{ $d->id }}')">
+                                        <i class="fa fa-key"></i> Change Password
+                                    </button>
+                                </x-acc-update-delete>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="100" class="text-center">
+                                    No Data Found
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </x-acc-table>
             </div>

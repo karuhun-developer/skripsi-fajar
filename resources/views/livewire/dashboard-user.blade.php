@@ -7,9 +7,8 @@
         <div class="card-body">
             <p><strong>Package:</strong> {{ auth()->user()->plan->bandwidth->name }}</p>
             <p><strong>Status:</strong> {{ auth()->user()->status }}</p>
-            <p><strong>Start Date:</strong> {{ auth()->user()->plan->subscriptions[0]->start_at }}</p>
-            <p><strong>Expired Date:</strong> {{ auth()->user()->plan->subscriptions[0]->expired_at }}</p>
-            <p><strong>Invoice Date:</strong> 2023-01-01</p>
+            <p><strong>Subscription Start:</strong> {{ optional(auth()->user()->plan->subscriptions[0]->start_at)->format('Y-m-d') }}</p>
+            <p><strong>Expiration Date:</strong> {{ optional(auth()->user()->plan->subscriptions[0]->expired_at)->format('Y-m-d') }}</p>
         </div>
     </div>
 
