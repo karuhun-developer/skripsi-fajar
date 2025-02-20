@@ -33,7 +33,7 @@ class IsolateUnpaidSubscriptionss extends Command
         // Get the date 7 days ago
         $sevenDaysAgo = Carbon::now()->subDays(7)->toDateString();
 
-        $subscriptions = Subscription::whereDate('expired_at', $sevenDaysAgo)
+        $subscriptions = Subscription::whereDate('expired_at', '<=',$sevenDaysAgo)
             ->where('status', 'throttle')
             ->get();
 
